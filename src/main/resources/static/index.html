@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampSkil | Your Gateway to Placements</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], poppins: ['Poppins', 'sans-serif'] },
+                    colors: { 
+                        cs: {
+                            bg: '#0B1113',
+                            surface: '#121A1C',
+                            card: '#192426',
+                            elevated: '#202D30',
+                            mint: '#48B0CA',
+                            'mint-hover': '#58C0D9',
+                            'mint-light': 'rgba(72, 176, 202, 0.10)',
+                            text: '#EBF3F5',
+                            muted: '#A3B1B4',
+                            faint: '#657477',
+                            border: '#202D30'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0B1113; color: #E6F1EA; scroll-behavior: smooth; }
+        .glass-nav { background: rgba(11, 17, 19, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid #202D30; }
+        .glass-card { background: #192426; border: 1px solid #202D30; transition: all 0.3s ease; }
+        .glass-card:hover { border-color: #48B0CA; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(72, 176, 202, 0.05); }
+        .text-glow { text-shadow: 0 0 30px rgba(72, 176, 202, 0.4); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B1113; }
+        ::-webkit-scrollbar-thumb { background: #202D30; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #48B0CA; }
+        
+    </style>
+</head>
+<body class="min-h-screen relative font-sans antialiased overflow-x-hidden">
+
+    <div class="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-cs-mint opacity-10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-emerald-700 opacity-10 rounded-full blur-[150px]"></div>
+    </div>
+
+    <nav class="fixed top-0 w-full z-50 glass-nav">
+        <div class="max-w-[1400px] mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+            
+            <!-- Logo & App Name -->
+            <a href="#" class="flex items-center gap-3">
+                <!-- Increased height from h-10 to h-16 -->
+                <img src="LOGO 2.png" alt="CampSkil Logo" class="h-16 w-auto object-contain logo-white">
+            </a>
+
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-cs-muted">
+                <a href="#features" class="hover:text-cs-mint transition-colors">Features</a>
+                <a href="#workflow" class="hover:text-cs-mint transition-colors">How it Works</a>
+                <a href="#contact" class="hover:text-cs-mint transition-colors">Contact</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="test.html" class="hidden sm:block text-sm font-medium text-cs-muted hover:text-cs-text transition-colors">
+                    Login
+                </a>
+                <a href="test.html" class="bg-cs-mint hover:bg-cs-mint-hover text-[#0B1113] font-bold py-2.5 px-6 rounded-lg text-sm transition-all shadow-[0_0_15px_rgba(72, 176, 202,0.3)]">
+                    Student Sign Up <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="relative pt-32 lg:pt-48 pb-20 px-6 max-w-[1400px] mx-auto text-center z-10">
+        <h1 class="font-poppins text-5xl lg:text-7xl font-bold tracking-tight text-cs-text mb-6 leading-[1.1]">
+            Your Gateway to <br class="hidden md:block" />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cs-mint to-emerald-400 text-glow">Top-Tier Placements.</span>
+        </h1>
+
+        <p class="text-cs-muted text-base lg:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            The all-in-one placement automation platform. Track campus drives, generate ATS-compliant resumes, and map your skills to industry demands in real-time.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="test.html" class="w-full sm:w-auto bg-cs-mint hover:bg-cs-mint-hover text-[#0B1113] font-bold py-3.5 px-8 rounded-lg text-sm transition-all shadow-[0_0_20px_rgba(72, 176, 202,0.3)]">
+                Access Dashboard
+            </a>
+            <a href="cv-builder.html" class="w-full sm:w-auto bg-cs-surface hover:bg-cs-elevated text-cs-text font-medium py-3.5 px-8 rounded-lg text-sm transition-all border border-cs-border flex items-center justify-center gap-2">
+                <i class="fa-regular fa-file-pdf text-cs-mint"></i> Try CV Builder
+            </a>
+        </div>
+        
+        <div class="mt-20 relative mx-auto max-w-5xl">
+            <div class="absolute inset-0 bg-gradient-to-t from-cs-bg via-cs-bg/20 to-transparent z-10 h-full pointer-events-none"></div>
+            <div class="rounded-xl border border-cs-border bg-cs-surface p-2 shadow-2xl">
+                <div class="rounded-lg border border-cs-border bg-cs-card aspect-[16/9] w-full flex flex-col overflow-hidden relative">
+                    
+                    <div class="w-full h-10 border-b border-cs-border flex items-center px-4 gap-2 bg-cs-surface shrink-0 relative z-10">
+                        <div class="w-3 h-3 rounded-full bg-red-500/80 border border-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/80 border border-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/80 border border-green-500"></div>
+                    </div>
+                    
+                    <div class="flex-1 w-full relative overflow-hidden bg-cs-bg">
+                        <img src="dashboard-preview.png" alt="CampSkil Dashboard" class="absolute inset-0 w-full h-full object-cover object-top opacity-80 hover:opacity-100 transition-opacity duration-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="border-y border-cs-border bg-cs-surface py-12 relative z-20">
+        <div class="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-cs-border">
+            <div class="flex flex-col gap-1">
+                <span class="text-4xl font-bold text-cs-text">150+</span>
+                <span class="text-xs text-cs-muted font-semibold uppercase tracking-wider mt-1">Visiting Companies</span>
+            </div>
+            <div class="flex flex-col gap-1">
+                <span class="text-4xl font-bold text-cs-text">2.5k</span>
+                <span class="text-xs text-cs-muted font-semibold uppercase tracking-wider mt-1">Students Placed</span>
+            </div>
+            <div class="flex flex-col gap-1">
+                <span class="text-4xl font-bold text-cs-text">24/7</span>
+                <span class="text-xs text-cs-muted font-semibold uppercase tracking-wider mt-1">Drive Updates</span>
+            </div>
+            <div class="flex flex-col gap-1">
+                <span class="text-4xl font-bold text-cs-mint">98%</span>
+                <span class="text-xs text-cs-muted font-semibold uppercase tracking-wider mt-1">Placement Success</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="workflow" class="py-24 max-w-[1200px] mx-auto px-6 relative z-10">
+        <div class="text-center mb-16">
+            <h2 class="font-poppins text-3xl md:text-4xl font-bold text-cs-text mb-4">The CampSkil Workflow</h2>
+            <p class="text-cs-muted max-w-xl mx-auto">A streamlined, three-step process designed to take you from the classroom to your dream corporate role.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 relative">
+            <!-- Connecting Line for Desktop -->
+<div class="hidden md:block absolute top-12 left-[16.66%] w-[66.66%] h-[2px] bg-cs-border z-0"></div>
+            <div class="relative z-10 flex flex-col items-center text-center">
+                <div class="w-24 h-24 rounded-full bg-cs-surface border-2 border-cs-mint flex items-center justify-center mb-6 text-2xl font-bold text-cs-mint shadow-[0_0_20px_rgba(72, 176, 202,0.2)]">1</div>
+                <h3 class="text-xl font-bold text-cs-text mb-3">Build Your Profile</h3>
+                <p class="text-sm text-cs-muted">Use our built-in ATS CV Builder to generate an executive resume that easily passes through corporate screening algorithms.</p>
+            </div>
+            <div class="relative z-10 flex flex-col items-center text-center">
+                <div class="w-24 h-24 rounded-full bg-cs-surface border-2 border-cs-mint flex items-center justify-center mb-6 text-2xl font-bold text-cs-mint shadow-[0_0_20px_rgba(72, 176, 202,0.2)]">2</div>
+                <h3 class="text-xl font-bold text-cs-text mb-3">Track Opportunities</h3>
+                <p class="text-sm text-cs-muted">Monitor the application pipeline. View upcoming aptitude tests, interview rounds, and TPO notices all from a single dashboard.</p>
+            </div>
+            <div class="relative z-10 flex flex-col items-center text-center">
+                <div class="w-24 h-24 rounded-full bg-cs-surface border-2 border-cs-mint flex items-center justify-center mb-6 text-2xl font-bold text-cs-mint shadow-[0_0_20px_rgba(72, 176, 202,0.2)]">3</div>
+                <h3 class="text-xl font-bold text-cs-text mb-3">Get Placed</h3>
+                <p class="text-sm text-cs-muted">Leverage skill mapping and company-specific resources to ace your interviews and secure your offer letter.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-24 bg-cs-surface border-y border-cs-border relative z-10">
+        <div class="max-w-[1400px] mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-poppins text-3xl md:text-4xl font-bold text-cs-text mb-4">Enterprise-Grade Features</h2>
+                <p class="text-cs-muted max-w-xl mx-auto">Engineered to handle high-volume campus placements with precision and security.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 rounded-lg bg-cs-mint-light border border-cs-mint/30 flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-chart-line text-xl text-cs-mint"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-cs-text mb-2">Application Pipeline</h3>
+                    <p class="text-cs-muted text-sm leading-relaxed">Visually track your job applications across multiple companies, from initial aptitude tests to final HR rounds.</p>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 rounded-lg bg-cs-mint-light border border-cs-mint/30 flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-file-pdf text-xl text-cs-mint"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-cs-text mb-2">ATS CV Generator</h3>
+                    <p class="text-cs-muted text-sm leading-relaxed">Don't guess what recruiters want. Our client-side rendering engine instantly builds perfectly formatted resumes.</p>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 rounded-lg bg-cs-mint-light border border-cs-mint/30 flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-bullseye text-xl text-cs-mint"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-cs-text mb-2">Smart Skill Mapping</h3>
+                    <p class="text-cs-muted text-sm leading-relaxed">Our system calculates a "Profile Match Score" for incoming drives, helping you prioritize companies that fit your skills.</p>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 rounded-lg bg-cs-mint-light border border-cs-mint/30 flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-bullhorn text-xl text-cs-mint"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-cs-text mb-2">TPO Noticeboard</h3>
+                    <p class="text-cs-muted text-sm leading-relaxed">Stay updated with official college announcements, urgent document verifications, and mock interview schedules.</p>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 rounded-lg bg-cs-mint-light border border-cs-mint/30 flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-shield-halved text-xl text-cs-mint"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-cs-text mb-2">Role-Based Security</h3>
+                    <p class="text-cs-muted text-sm leading-relaxed">Built-in RBAC architecture ensures strict data segregation between Students, Placement Officers, and Super Admins.</p>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 rounded-lg bg-cs-mint-light border border-cs-mint/30 flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-bolt text-xl text-cs-mint"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-cs-text mb-2">Lightning Fast UI</h3>
+                    <p class="text-cs-muted text-sm leading-relaxed">Developed using modern frontend technologies, resulting in zero-latency dashboard rendering and instant data updates.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="bg-cs-bg pt-16 pb-8 border-t border-cs-border">
+        <div class="max-w-[1400px] mx-auto px-6 flex flex-col items-center justify-center gap-8">
+            
+           <!-- Branding -->
+            <div class="flex items-center gap-3">
+                <!-- Increased height from h-8 to h-16 -->
+                <img src="LOGO 2.png" alt="CampSkil Logo" class="h-16 w-auto opacity-50 logo-white hover:opacity-100 transition-opacity">
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-6 text-sm text-cs-faint font-medium">
+                <a href="#" class="hover:text-cs-mint transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-cs-mint transition-colors">Terms of Service</a>
+                <a href="mailto:support@campskil.com" class="hover:text-cs-text transition-colors flex items-center gap-2">
+                    <i class="fa-regular fa-envelope"></i> support@campskil.com
+                </a>
+            </div>
+
+            <div class="mt-4 pt-8 border-t border-cs-border w-full max-w-md text-center">
+                <p class="text-sm text-cs-faint tracking-wide">
+                    Designed and Engineered by <br/>
+                    <span class="text-lg font-bold font-poppins text-cs-text mt-1 inline-block">TEAM <span class="text-cs-mint">NOMAD</span></span>
+                </p>
+                <p class="text-[10px] text-cs-faint mt-4 uppercase tracking-widest">&copy; 2026 CampSkil. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+<script src="/app-api.js"></script>
+</body>
+</html>

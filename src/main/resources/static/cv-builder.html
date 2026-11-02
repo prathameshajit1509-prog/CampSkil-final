@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS CV Builder | CampSkil</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Poppins:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        poppins: ['Poppins', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'] 
+                    },
+                    colors: { 
+                        cs: {
+                            bg: 'var(--cs-bg)',
+                            surface: 'var(--cs-surface)',
+                            card: 'var(--cs-card)',
+                            elevated: 'var(--cs-elevated)',
+                            mint: 'var(--cs-mint)',
+                            'mint-hover': 'var(--cs-mint-hover)',
+                            text: 'var(--cs-text)',
+                            muted: 'var(--cs-text-secondary)',
+                            border: 'var(--cs-border)',
+                            btntext: 'var(--cs-btn-text)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+                @layer base {
+            :root {
+                --cs-bg: #F0F9FF; --cs-surface: #F0F9FF; --cs-card: #FFFFFF; --cs-elevated: #F8FAFC;
+                --cs-mint: #48B0CA; --cs-mint-hover: #3695AB; --cs-text: #1E293B; --cs-text-secondary: #64748B;
+                --cs-faint: #94A3B8; --cs-border: rgba(14, 165, 233, 0.15); --cs-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            }
+            .dark {
+                --cs-bg: #0B1113; --cs-surface: #121A1C; --cs-card: #192426; --cs-elevated: #202D30;
+                --cs-mint: #48B0CA; --cs-mint-hover: #58C0D9; --cs-text: #EBF3F5; --cs-text-secondary: #A3B1B4;
+                --cs-faint: #657477; --cs-border: #202D30; --cs-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            }
+        }
+        body { background-color: var(--cs-bg); color: var(--cs-text); }
+        .resume-paper { 
+            width: 800px; height: 1131px; background: white; color: black; box-shadow: var(--cs-shadow); transform-origin: top center; overflow: hidden;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--cs-border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cs-mint); }
+        
+        #previewContainer { transform: scale(0.65); transform-origin: top center; margin-bottom: -350px; }
+        @media (min-width: 1536px) { #previewContainer { transform: scale(0.8); margin-bottom: -200px; } }
+        
+        /* Ensures date pickers format correctly in dark mode */
+        input[type="month"]::-webkit-calendar-picker-indicator { filter: invert(var(--cs-invert, 0)); cursor: pointer; }
+        .dark input[type="month"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col h-screen overflow-hidden transition-colors duration-300">
+
+    <header class="h-16 bg-cs-surface border-b border-cs-border flex items-center px-6 shrink-0 z-20 justify-between transition-colors duration-300">
+        <a href="dashboard.html" class="flex items-center gap-2 text-cs-muted hover:text-cs-mint transition-colors text-sm font-medium">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-file-signature text-cs-mint"></i>
+            <span class="font-poppins font-semibold text-lg tracking-tight text-cs-text">Advanced CV Builder</span>
+        </div>
+        <button type="button" id="downloadPdfBtn" class="bg-cs-mint hover:bg-cs-mint-hover text-cs-btntext font-semibold py-2 px-4 rounded-lg text-sm transition-all shadow-md flex items-center gap-2">
+            <i class="fa-solid fa-download"></i> Download PDF
+        </button>
+    </header>
+
+    <main class="flex-1 flex overflow-hidden">
+        
+        <div class="w-full lg:w-[45%] p-6 lg:p-8 overflow-y-auto border-r border-cs-border pb-32 transition-colors duration-300">
+            <div class="max-w-xl mx-auto">
+                <h2 class="text-2xl font-poppins font-bold mb-2 text-cs-text">Profile Details</h2>
+                <p class="text-cs-muted text-sm mb-6">Fill in your information to generate an executive-style template.</p>
+                
+                <div id="smartWarning" class="hidden mb-6 bg-red-500/10 border border-red-500/30 text-red-500 text-xs py-3 px-4 rounded-lg flex items-start gap-3 transition-all">
+                    <i class="fa-solid fa-triangle-exclamation mt-0.5 text-lg"></i>
+                    <div>
+                        <p class="font-bold uppercase tracking-wider mb-0.5">Unprofessional Content Detected</p>
+                        <p>Please ensure your text uses professional terminology, avoids excessive length, and does not contain random characters.</p>
+                    </div>
+                </div>
+                
+                <form id="cvForm" class="flex flex-col gap-6">
+                    
+                    <div class="bg-cs-card p-5 rounded-xl border border-cs-border shadow-sm transition-colors duration-300">
+                        <h3 class="text-sm font-semibold text-cs-mint mb-4 uppercase tracking-wider"><i class="fa-regular fa-id-card mr-2"></i> Header & Contact</h3>
+                        <div class="flex flex-col gap-3">
+                            <input type="text" id="inName" placeholder="Full Name (e.g. Rachel Smith)" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                            <input type="text" id="inTagline" placeholder="Professional Title (e.g. Computer Science Student | Java Developer)" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                            
+                            <div class="grid grid-cols-2 gap-3 mt-2">
+                                <input type="tel" id="inPhone" placeholder="Phone Number" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                                <input type="email" id="inEmail" placeholder="Email Address" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                                <input type="text" id="inLocation" placeholder="City, State / Zip" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                                <input type="url" id="inLinkedin" placeholder="LinkedIn URL" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-cs-card p-5 rounded-xl border border-cs-border shadow-sm transition-colors duration-300">
+                        <h3 class="text-sm font-semibold text-cs-mint mb-4 uppercase tracking-wider"><i class="fa-solid fa-user-tie mr-2"></i> Professional Profile</h3>
+                        <textarea id="inProfile" maxlength="300" rows="3" placeholder="A brief summary of your goals, skills, and value you bring to a company..." class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint resize-none transition-colors"></textarea>
+                    </div>
+
+                    <div class="bg-cs-card p-5 rounded-xl border border-cs-border shadow-sm transition-colors duration-300">
+                        <h3 class="text-sm font-semibold text-cs-mint mb-4 uppercase tracking-wider"><i class="fa-solid fa-graduation-cap mr-2"></i> Education & Certifications</h3>
+                        <div class="flex flex-col gap-3">
+                            <input type="text" id="inDegree" placeholder="Degree (e.g. Bachelor of Technology in CSE)" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                            <input type="text" id="inCollege" placeholder="College / University Name" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                            
+                            <hr class="border-cs-border my-2 transition-colors">
+                            <input type="text" id="inCertTitle" placeholder="Certification Name (e.g. AWS Cloud Practitioner)" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                            <input type="text" id="inCertOrg" placeholder="Issuing Organization (e.g. Amazon Web Services)" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                        </div>
+                    </div>
+
+                    <div class="bg-cs-card p-5 rounded-xl border border-cs-border shadow-sm transition-colors duration-300">
+                        <h3 class="text-sm font-semibold text-cs-mint mb-4 uppercase tracking-wider"><i class="fa-solid fa-code mr-2"></i> Key Skills</h3>
+                        <p class="text-xs text-cs-muted mb-2">Separate skills with a pipe symbol ( | ).</p>
+                        <textarea id="inSkills" maxlength="150" rows="3" placeholder="Java | Python | Web Development | Data Structures | SQL | Machine Learning" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint resize-none transition-colors"></textarea>
+                    </div>
+
+                    <div class="bg-cs-card p-5 rounded-xl border border-cs-border shadow-sm transition-colors duration-300">
+                        <h3 class="text-sm font-semibold text-cs-mint mb-4 uppercase tracking-wider"><i class="fa-solid fa-briefcase mr-2"></i> Experience / Projects</h3>
+                        
+                        <div class="mb-4">
+                            <h4 class="text-xs font-bold text-cs-muted uppercase mb-2">Entry 1</h4>
+                            
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <input type="text" id="inExp1Role" placeholder="Role / Title" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                                <input type="text" id="inExp1Company" placeholder="Company Name" class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                            </div>
+
+                            <div class="flex flex-col gap-1 mb-3">
+                                <label class="text-[10px] text-cs-muted uppercase tracking-wider font-semibold">Duration (Month/Year)</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="month" id="inExp1Start" class="w-full py-2 px-3 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                                    <span class="text-cs-muted text-xs">to</span>
+                                    <input type="month" id="inExp1End" class="w-full py-2 px-3 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                                    <label class="flex items-center gap-1.5 text-xs text-cs-text cursor-pointer whitespace-nowrap ml-2 font-medium">
+                                        <input type="checkbox" id="inExp1Present" class="accent-cs-mint w-4 h-4 rounded cursor-pointer">
+                                        Present
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <textarea id="inExp1Summary" maxlength="150" rows="2" placeholder="Brief 1-sentence summary of the project..." class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint resize-none mb-3 transition-colors"></textarea>
+                            <p class="text-xs text-cs-muted mb-1">Bullet points (Press Enter for a new bullet):</p>
+                            <textarea id="inExp1Bullets" maxlength="400" rows="3" placeholder="Developed a robust API using Node.js...&#10;Increased processing speed by 15%..." class="w-full py-2.5 px-4 rounded-lg text-sm bg-cs-elevated text-cs-text border border-cs-border focus:outline-none focus:border-cs-mint resize-none transition-colors"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex flex-1 bg-[#1e293b] overflow-y-auto relative justify-center">
+            
+            <div id="previewContainer" class="mt-8 transition-all duration-300">
+                <div id="resumePreview" class="resume-paper relative flex flex-col font-sans">
+                    
+                    <div class="bg-[#d2e0e5] px-12 py-10 w-full shrink-0">
+                        <h1 id="outName" class="font-serif text-[3.25rem] leading-none text-[#334155] uppercase tracking-wide mb-3">RACHEL SMITH</h1>
+                        <p id="outTagline" class="font-sans text-[15px] font-medium text-[#475569] uppercase tracking-wider">
+                            Inventive <span class="font-bold italic">SENIOR OPERATIONS LEADER</span> with 7+ years of advancement and experience.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-1 w-full bg-white">
+                        
+                        <div class="w-[35%] border-r-[1.5px] border-slate-400 pt-8 pb-12 pl-12 pr-6 flex flex-col gap-8">
+                            
+                            <div>
+                                <h2 class="font-serif text-lg font-bold text-slate-800 uppercase tracking-widest mb-3">Contact</h2>
+                                <div class="text-[14px] text-slate-700 leading-relaxed flex flex-col gap-1">
+                                    <span id="outPhone">(555) 123-1234</span>
+                                    <span id="outLocation">Charleston, SC 98765</span>
+                                    <span id="outEmail">rachel@example.com</span>
+                                    <span id="outLinkedin">www.linkedin.com/example</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h2 class="font-serif text-lg font-bold text-slate-800 uppercase tracking-widest mb-3">Education</h2>
+                                <div id="outDegree" class="text-[14px] font-bold text-slate-800 uppercase leading-snug mb-2">BACHELOR OF BUSINESS ADMINISTRATION</div>
+                                <div id="outCollege" class="text-[14px] text-slate-700">Roanoke College, Roanoke, VA</div>
+                            </div>
+
+                            <div>
+                                <h2 class="font-serif text-lg font-bold text-slate-800 uppercase tracking-widest mb-3">Certification</h2>
+                                <div id="outCertTitle" class="text-[14px] font-bold text-slate-800 uppercase leading-snug mb-1">PROJECT MANAGEMENT PROFESSIONAL</div>
+                                <div id="outCertOrg" class="text-[14px] text-slate-700">Project Management Institute</div>
+                            </div>
+
+                            <div>
+                                <h2 class="font-serif text-lg font-bold text-slate-800 uppercase tracking-widest mb-3">Key Skills</h2>
+                                <p id="outSkills" class="text-[14px] text-slate-700 leading-loose">
+                                    Business Needs Assessment | Complex Problem-Solving | Conflict Resolution | Cost Reduction & Elimination | Data Gathering & Analysis
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="w-[65%] pt-8 pb-12 pr-12 pl-8 flex flex-col gap-6">
+                            
+                            <div>
+                                <h2 class="font-serif text-xl font-bold text-slate-800 uppercase tracking-widest mb-3">Profile</h2>
+                                <p id="outProfile" class="text-[14.5px] text-slate-700 leading-relaxed">
+                                    Skilled at paring back costs, streamlining processes, and driving strategic growth in competitive markets. Focused on finding new ways to hire, train, and motivate successful staff members.
+                                </p>
+                            </div>
+
+                            <div class="w-full h-[1.5px] bg-[#648da1]"></div>
+
+                            <div>
+                                <h2 class="font-serif text-xl font-bold text-slate-800 uppercase tracking-widest mb-4">Professional Experience</h2>
+                                
+                                <div class="mb-6">
+                                    <div class="text-[13px] text-slate-800 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                        <span id="outExp1Role" class="font-bold">SENIOR OPERATIONS MANAGER</span>
+                                        <span class="text-[10px]">&bull;</span>
+                                        <span id="outExp1Date">AUGUST 2020 TO PRESENT</span>
+                                    </div>
+                                    <div id="outExp1Company" class="text-[15px] text-slate-800 mb-3">
+                                        UVW Incorporated • Charleston, SC
+                                    </div>
+                                    <p id="outExp1Summary" class="text-[14.5px] text-slate-700 leading-relaxed mb-4">
+                                        Appointed to oversee 15 direct and 40 indirect reports. Control and execute a $4M budget.
+                                    </p>
+                                    <ul id="outExp1Bullets" class="list-disc pl-5 text-[14.5px] text-slate-700 space-y-2 marker:text-slate-500">
+                                        <li>Streamlined weekly reporting system, raising efficiency 20% with no loss in data accuracy.</li>
+                                        <li>Cut yearly costs $40K by setting a more strategic, consistent schedule for ordering product materials.</li>
+                                        <li>Introduced onboarding processes and communication checkpoints that helped improve new hire retention by 15%.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // STRICT INPUT VALIDATION MASKS
+        
+        // 1. Name: Only allows letters, spaces, and periods (No numbers/symbols)
+        document.getElementById('inName').addEventListener('input', function() {
+            this.value = this.value.replace(/[^a-zA-Z\s\.]/g, '');
+        });
+
+        // 2. Phone: Only allows numbers, +, -, spaces, and parentheses
+        document.getElementById('inPhone').addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9\+\-\s\(\)]/g, '');
+        });
+
+        // STANDARD MAPPINGS
+        const syncMap = {
+            'inName': 'outName',
+            'inTagline': 'outTagline',
+            'inPhone': 'outPhone',
+            'inLocation': 'outLocation',
+            'inEmail': 'outEmail',
+            'inLinkedin': 'outLinkedin',
+            'inDegree': 'outDegree',
+            'inCollege': 'outCollege',
+            'inCertTitle': 'outCertTitle',
+            'inCertOrg': 'outCertOrg',
+            'inSkills': 'outSkills',
+            'inProfile': 'outProfile',
+            'inExp1Role': 'outExp1Role',
+            'inExp1Company': 'outExp1Company',
+            'inExp1Summary': 'outExp1Summary'
+        };
+
+        const defaultValues = {
+            'outName': 'RACHEL SMITH',
+            'outTagline': 'Inventive <span class="font-bold italic">SENIOR OPERATIONS LEADER</span> with 7+ years of advancement.',
+            'outPhone': '(555) 123-1234',
+            'outLocation': 'Charleston, SC 98765',
+            'outEmail': 'rachel@example.com',
+            'outLinkedin': 'www.linkedin.com/example',
+            'outDegree': 'BACHELOR OF BUSINESS ADMINISTRATION',
+            'outCollege': 'Roanoke College, Roanoke, VA',
+            'outCertTitle': 'PROJECT MANAGEMENT PROFESSIONAL',
+            'outCertOrg': 'Project Management Institute',
+            'outSkills': 'Business Needs Assessment | Complex Problem-Solving | Conflict Resolution | Cost Reduction & Elimination | Data Gathering & Analysis',
+            'outProfile': 'Skilled at paring back costs, streamlining processes, and driving strategic growth in competitive markets. Focused on finding new ways to hire, train, and motivate successful staff members.',
+            'outExp1Role': 'SENIOR OPERATIONS MANAGER',
+            'outExp1Company': 'UVW Incorporated • Charleston, SC',
+            'outExp1Summary': 'Appointed to oversee 15 direct and 40 indirect reports. Control and execute a $4M budget.'
+        };
+
+        for (const [inputId, outputId] of Object.entries(syncMap)) {
+            const inputEl = document.getElementById(inputId);
+            if(inputEl) {
+                inputEl.addEventListener('input', function(e) {
+                    document.getElementById(outputId).textContent = e.target.value || '';
+                    if(!e.target.value && defaultValues[outputId]) {
+                        document.getElementById(outputId).innerHTML = defaultValues[outputId];
+                    }
+                });
+            }
+        }
+
+        // --- STRICT DATE ENGINE ---
+        // Converts "2024-08" into "AUGUST 2024" safely
+        const formatMonthYear = (val) => {
+            if(!val) return '';
+            const [year, month] = val.split('-');
+            const date = new Date(year, month - 1);
+            return date.toLocaleString('default', { month: 'long', year: 'numeric' }).toUpperCase();
+        };
+
+        const updateDateOutput = () => {
+            const startVal = document.getElementById('inExp1Start').value;
+            const endVal = document.getElementById('inExp1End').value;
+            const isPresent = document.getElementById('inExp1Present').checked;
+            
+            const outEl = document.getElementById('outExp1Date');
+            
+            if (!startVal) {
+                outEl.textContent = 'AUGUST 2020 TO PRESENT'; // Default
+                return;
+            }
+
+            const startFormatted = formatMonthYear(startVal);
+            const endFormatted = isPresent ? 'PRESENT' : formatMonthYear(endVal);
+            
+            outEl.textContent = `${startFormatted} TO ${endFormatted || '...'}`;
+        };
+
+        document.getElementById('inExp1Start').addEventListener('input', updateDateOutput);
+        document.getElementById('inExp1End').addEventListener('input', updateDateOutput);
+        document.getElementById('inExp1Present').addEventListener('change', (e) => {
+            const endInput = document.getElementById('inExp1End');
+            if (e.target.checked) {
+                endInput.disabled = true;
+                endInput.value = '';
+                endInput.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                endInput.disabled = false;
+                endInput.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            updateDateOutput();
+        });
+
+
+        // --- SMART CAREER FILTER ENGINE ---
+        const smartWarning = document.getElementById('smartWarning');
+        const downloadBtn = document.getElementById('downloadPdfBtn');
+        const careerKeywords = ['develop', 'manage', 'lead', 'team', 'project', 'system', 'design', 'engineer', 'analyze', 'data', 'software', 'student', 'university', 'college', 'skill', 'create', 'build', 'work', 'experience', 'learn', 'support', 'organize', 'business', 'process', 'market', 'research', 'code', 'plan', 'operations', 'budget', 'execute', 'strategy'];
+
+        function validateProfessionalText(text) {
+            if (!text || text.trim() === '') return true; 
+            const lowerText = text.toLowerCase();
+            const words = lowerText.split(/\s+/);
+            if (words.some(word => word.length > 20)) return false;
+            if (/(.)\1{4,}/.test(lowerText)) return false;
+            if (words.length > 6) {
+                const hasCareerWord = careerKeywords.some(keyword => lowerText.includes(keyword));
+                if (!hasCareerWord) return false; 
+            }
+            return true;
+        }
+
+        const textFieldsToCheck = [
+            'inName', 'inTagline', 'inDegree', 'inCollege', 
+            'inCertTitle', 'inCertOrg', 'inSkills', 'inProfile', 
+            'inExp1Role', 'inExp1Company', 'inExp1Summary', 'inExp1Bullets'
+        ];
+        
+        textFieldsToCheck.forEach(id => {
+            const field = document.getElementById(id);
+            if(field) {
+                field.addEventListener('input', (e) => {
+                    const isValid = validateProfessionalText(e.target.value);
+                    if (!isValid) {
+                        field.classList.add('border-red-500', 'focus:border-red-500', 'bg-red-500/5');
+                        smartWarning.classList.remove('hidden');
+                        downloadBtn.disabled = true;
+                        downloadBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    } else {
+                        field.classList.remove('border-red-500', 'focus:border-red-500', 'bg-red-500/5');
+                        const anyInvalid = textFieldsToCheck.some(fId => !validateProfessionalText(document.getElementById(fId).value));
+                        if (!anyInvalid) {
+                            smartWarning.classList.add('hidden');
+                            downloadBtn.disabled = false;
+                            downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
+                    }
+                });
+            }
+        });
+
+        // Auto-Bulleting Engine for Experience
+        const inExp1Bullets = document.getElementById('inExp1Bullets');
+        const outExp1Bullets = document.getElementById('outExp1Bullets');
+        
+        inExp1Bullets.addEventListener('input', function(e) {
+            const lines = e.target.value.split('\n').filter(line => line.trim() !== '');
+            if (lines.length === 0) {
+                outExp1Bullets.innerHTML = `
+                    <li>Streamlined weekly reporting system, raising efficiency 20% with no loss in data accuracy.</li>
+                    <li>Cut yearly costs $40K by setting a more strategic, consistent schedule for ordering product materials.</li>
+                    <li>Introduced onboarding processes and communication checkpoints that helped improve new hire retention by 15%.</li>
+                `;
+            } else {
+                outExp1Bullets.innerHTML = lines.map(line => {
+                    const cleanLine = line.replace(/^-\s*/, '').trim();
+                    return `<li>${cleanLine}</li>`;
+                }).join('');
+            }
+        });
+
+       // PDF Generation via html2pdf
+        document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+            const resumeElement = document.getElementById('resumePreview');
+            const nameValue = document.getElementById('inName').value || 'Student';
+            const fileName = nameValue.replace(/\s+/g, '_') + '_Executive_CV.pdf';
+
+            const btn = document.getElementById('downloadPdfBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
+            btn.classList.add('opacity-75', 'cursor-wait');
+
+            // Temporarily remove shadow
+            resumeElement.style.boxShadow = 'none';
+
+            const opt = {
+                margin:       0,
+                filename:     fileName,
+                image:        { type: 'jpeg', quality: 1 }, 
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true, 
+                    width: 800,      // Strictly lock the capture width
+                    height: 1131,    // Strictly lock the capture height
+                    scrollY: 0       // Prevent browser scroll offsets from ruining the capture
+                }, 
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(resumeElement).save().then(() => {
+                // Restore shadow instantly
+                resumeElement.style.boxShadow = '';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('opacity-75', 'cursor-wait');
+                }, 1000);
+            });
+        });
+    </script>
+<script src="/app-api.js"></script>
+</body>
+</html>

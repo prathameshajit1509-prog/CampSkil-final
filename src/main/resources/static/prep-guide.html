@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prep Guide | CampSkil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], poppins: ['Poppins', 'sans-serif'] },
+                    colors: { 
+                        cs: {
+                            bg: 'var(--cs-bg)', surface: 'var(--cs-surface)', card: 'var(--cs-card)',
+                            elevated: 'var(--cs-elevated)', mint: 'var(--cs-mint)', 'mint-hover': 'var(--cs-mint-hover)',
+                            text: 'var(--cs-text)', muted: 'var(--cs-text-secondary)', faint: 'var(--cs-faint)', border: 'var(--cs-border)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+                @layer base {
+            :root {
+                --cs-bg: #F0F9FF; --cs-surface: #F0F9FF; --cs-card: #FFFFFF; --cs-elevated: #F8FAFC;
+                --cs-mint: #48B0CA; --cs-mint-hover: #3695AB; --cs-text: #1E293B; --cs-text-secondary: #64748B;
+                --cs-faint: #94A3B8; --cs-border: rgba(14, 165, 233, 0.15); --cs-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            }
+            .dark {
+                --cs-bg: #0B1113; --cs-surface: #121A1C; --cs-card: #192426; --cs-elevated: #202D30;
+                --cs-mint: #48B0CA; --cs-mint-hover: #58C0D9; --cs-text: #EBF3F5; --cs-text-secondary: #A3B1B4;
+                --cs-faint: #657477; --cs-border: #202D30; --cs-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            }
+        }
+        body { background-color: var(--cs-bg); color: var(--cs-text); }
+        .custom-card { background-color: var(--cs-card); border: 1px solid var(--cs-border); border-radius: 1rem; box-shadow: var(--cs-shadow); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--cs-border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cs-mint); }
+        input, select { color: var(--cs-text) !important; }
+    </style>
+</head>
+<body class="font-sans antialiased h-screen overflow-hidden flex transition-colors duration-300">
+
+
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-cs-surface border-r border-cs-border hidden lg:flex flex-col h-screen relative z-20 shrink-0 transition-colors duration-300">
+        <div class="h-28 flex items-center justify-center p-4 border-b border-cs-border">
+            <img src="LOGO 2.png" alt="CampSkil Logo" class="h-24 w-auto object-contain drop-shadow-sm transition-all duration-300 dark:invert-0 dark:hue-rotate-0 invert hue-rotate-180">
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-4 py-6 custom-scrollbar">
+            <p class="text-[11px] font-bold text-cs-faint uppercase tracking-wider mb-4">Main Menu</p>
+            <nav class="flex flex-col gap-2">
+                <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-house w-5 text-center"></i> Overview
+                </a>
+                <a href="campus-drives.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-briefcase w-5 text-center"></i> On-Campus
+                </a>
+                <a href="credentials.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-certificate w-5 text-center"></i> Credentials
+                </a>
+            </nav>
+
+            <p class="text-[11px] font-bold text-cs-faint uppercase tracking-wider mt-8 mb-4">Tools</p>
+            <nav class="flex flex-col gap-2">
+                <a href="cv-builder.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-file-signature w-5 text-center"></i> ATS CV Builder
+                </a>
+                <a href="prep-guide.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-user-tie w-5 text-center"></i> Prep Guide
+                </a>
+                
+                <div>
+                    <button id="offCampusToggle" class="w-full flex items-center justify-between px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all focus:outline-none">
+                        <div class="flex items-center gap-3"><i class="fa-solid fa-earth-americas w-5 text-center"></i> Off-Campus</div>
+                        <i id="offCampusChevron" class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300"></i>
+                    </button>
+                    <div id="offCampusMenu" class="hidden flex-col gap-1 px-4 py-2 mt-1 mx-2 bg-cs-elevated border border-cs-border rounded-lg shadow-inner">
+                        <a href="#" id="linkLinkedin" target="_blank" class="flex items-center gap-3 px-3 py-2 text-xs text-cs-muted hover:text-[#0077b5] hover:bg-cs-bg rounded-md transition-all"><i class="fa-brands fa-linkedin text-sm"></i> Search LinkedIn</a>
+                        <a href="#" id="linkNaukri" target="_blank" class="flex items-center gap-3 px-3 py-2 text-xs text-cs-muted hover:text-[#275df5] hover:bg-cs-bg rounded-md transition-all"><div class="w-3 h-3 rounded bg-current text-cs-surface flex items-center justify-center font-bold text-[8px]">N</div> Naukri.com</a>
+                        <a href="#" id="linkWellfound" target="_blank" class="flex items-center gap-3 px-3 py-2 text-xs text-cs-muted hover:text-white hover:bg-cs-bg rounded-md transition-all"><i class="fa-brands fa-angellist text-sm"></i> Startup Jobs</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-cs-border">
+            <button id="logoutBtn" class="flex items-center gap-3 px-4 py-3 w-full text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-xl font-medium transition-all"><i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Log Out</button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-cs-bg transition-colors duration-300 relative z-10">
+        
+        <!-- Header -->
+        <header class="h-20 bg-cs-bg border-b border-cs-border flex items-center justify-between px-8 shrink-0 z-30 transition-colors duration-300">
+            <h1 class="font-poppins font-bold text-xl text-cs-text tracking-tight">Interview Prep Guide
+            </h1>
+            <div class="flex items-center gap-5">
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-cs-surface border border-cs-border flex items-center justify-center text-cs-muted hover:text-cs-mint transition-colors">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:block"></i>
+                </button>
+                
+                <div class="relative">
+                    <button id="bellBtn" class="w-10 h-10 rounded-full bg-cs-surface border border-cs-border flex items-center justify-center text-cs-muted hover:text-cs-mint transition-colors relative focus:outline-none">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-cs-mint border-2 border-cs-bg rounded-full"></span>
+                    </button>
+                    <div id="notificationPopup" class="hidden absolute right-0 top-full mt-4 w-80 bg-cs-elevated border border-cs-border rounded-xl shadow-2xl p-4 z-50 flex-col gap-3 origin-top-right">
+                        <div class="flex items-center justify-between border-b border-cs-border pb-3">
+                            <span class="font-poppins font-bold text-sm text-cs-text flex items-center gap-2"><i class="fa-solid fa-bullhorn text-cs-mint"></i> TPO Notices</span>
+                            <span class="text-[10px] bg-cs-mint/20 text-cs-mint px-2 py-0.5 rounded-full font-bold">2 New</span>
+                        </div>
+                        <div class="flex flex-col gap-3 max-h-72 overflow-y-auto custom-scrollbar">
+                            <div class="bg-cs-card border-l-2 border-cs-mint p-3 rounded-r-lg shadow-sm">
+                                <div class="flex justify-between items-center mb-1"><span class="text-xs font-bold text-cs-text">Resume Verification</span><span class="text-[9px] text-cs-faint">2 hrs ago</span></div>
+                                <p class="text-[11px] text-cs-muted leading-relaxed">All final year CS/IT students must submit their ATS-formatted resumes for dean's approval by EOD Friday.</p>
+                            </div>
+                            <div class="bg-cs-card border-l-2 border-cs-border p-3 rounded-r-lg shadow-sm">
+                                <div class="flex justify-between items-center mb-1"><span class="text-xs font-bold text-cs-text">Mock Interviews</span><span class="text-[9px] text-cs-faint">Yesterday</span></div>
+                                <p class="text-[11px] text-cs-muted leading-relaxed">Alumni network will be conducting technical mock interviews next week. Registration links sent to college email.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="credentials.html" class="flex items-center gap-3 pl-5 border-l border-cs-border focus:outline-none group hover:opacity-80 transition-opacity bg-transparent cursor-pointer">
+                    <div class="text-right hidden md:block">
+                        <div id="displayName" class="text-sm font-bold text-cs-text tracking-wide uppercase">STUDENT</div>
+                        <div id="displayRole" class="text-[10px] text-cs-faint font-medium">B.Tech CSE</div>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-cs-mint text-[#0B1214] flex items-center justify-center font-bold text-lg shadow-sm border border-cs-mint-hover group-hover:scale-105 transition-transform">
+                        <span id="displayInitial">S</span>
+                    </div>
+                </a>
+            </div>
+        </header>
+
+        <!-- Scrollable Workspace (Prep Content) -->
+        <div class="flex-1 overflow-y-auto p-8 custom-scrollbar relative z-10">
+            <div class="max-w-[1400px] mx-auto flex flex-col gap-8">
+                
+                <!-- Hero / Banner -->
+                <div class="custom-card p-8 flex flex-col md:flex-row items-center justify-between gap-6 bg-gradient-to-r from-cs-surface to-cs-elevated border-l-4 border-l-cs-mint">
+                    <div>
+                        <h2 class="text-2xl font-poppins font-bold text-cs-mint mb-2">Last-Minute Interview Prep</h2>
+                        <p class="text-cs-muted text-sm max-w-2xl leading-relaxed">Brush up on the most frequently asked questions across top companies. Select a topic below to review key concepts, typical interview questions, and optimal answers.</p>
+                    </div>
+                    <div class="w-20 h-20 bg-cs-mint/10 border-2 border-cs-mint/50 rounded-full flex items-center justify-center text-cs-mint text-4xl shadow-inner shrink-0">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Left Column: Categories -->
+                    <div class="lg:col-span-1 flex flex-col gap-4">
+                        <h3 class="font-bold text-cs-text text-sm uppercase tracking-wider mb-2">Prep Categories</h3>
+                        
+                        <button class="cat-btn w-full text-left p-4 custom-card border-l-2 border-cs-mint bg-cs-mint/5 flex items-center justify-between group transition-all" data-category="dsa" data-icon="fa-code" onclick="loadCategory('dsa')">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-code text-cs-mint w-5 text-center"></i>
+                                <span class="font-bold text-cs-text text-sm">Data Structures & Algo</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-cs-mint text-xs"></i>
+                        </button>
+
+                        <button class="cat-btn w-full text-left p-4 custom-card border-transparent hover:border-cs-border hover:bg-cs-surface flex items-center justify-between group transition-all" data-category="system_design" data-icon="fa-network-wired" onclick="loadCategory('system_design')">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-network-wired text-cs-muted group-hover:text-cs-mint transition-colors w-5 text-center"></i>
+                                <span class="font-bold text-cs-muted group-hover:text-cs-text text-sm transition-colors">System Design</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-cs-faint group-hover:text-cs-mint text-xs transition-colors"></i>
+                        </button>
+
+                        <button class="cat-btn w-full text-left p-4 custom-card border-transparent hover:border-cs-border hover:bg-cs-surface flex items-center justify-between group transition-all" data-category="core_cs" data-icon="fa-database" onclick="loadCategory('core_cs')">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-database text-cs-muted group-hover:text-cs-mint transition-colors w-5 text-center"></i>
+                                <span class="font-bold text-cs-muted group-hover:text-cs-text text-sm transition-colors">Core CS (OS/DBMS/CN)</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-cs-faint group-hover:text-cs-mint text-xs transition-colors"></i>
+                        </button>
+                        
+                        <button class="cat-btn w-full text-left p-4 custom-card border-transparent hover:border-cs-border hover:bg-cs-surface flex items-center justify-between group transition-all" data-category="hr" data-icon="fa-users" onclick="loadCategory('hr')">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-users text-cs-muted group-hover:text-cs-mint transition-colors w-5 text-center"></i>
+                                <span class="font-bold text-cs-muted group-hover:text-cs-text text-sm transition-colors">HR & Behavioral</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-cs-faint group-hover:text-cs-mint text-xs transition-colors"></i>
+                        </button>
+                    </div>
+
+                    <!-- Right Column: Q&A Accordion -->
+                    <div class="lg:col-span-2 flex flex-col gap-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 id="prepTitle" class="font-bold text-cs-text text-sm uppercase tracking-wider">Top DSA Questions</h3>
+                            <span id="prepCount" class="text-xs text-cs-mint bg-cs-mint/10 px-3 py-1 rounded-full font-bold">5 Questions</span>
+                        </div>
+
+                        <div id="accordionContainer" class="flex flex-col gap-4">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- THEME & DASHBOARD UTILS ---
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+
+        // --- PREP GUIDE LOGIC ---
+        const prepData = {
+            'dsa': {
+                title: 'Top DSA Questions',
+                count: '5 Questions',
+                questions: [
+                    {
+                        q: 'Reverse a Linked List (Iterative & Recursive)',
+                        a: '<strong>Iterative:</strong> Use three pointers (`prev`, `curr`, `next`). Traverse the list, continuously pointing `curr.next` to `prev` and shifting all pointers forward.<br><br><strong>Recursive:</strong> Traverse to the end to find the new head. As the recursive calls return, set `head.next.next = head` and `head.next = null`.'
+                    },
+                    {
+                        q: 'Two Sum',
+                        a: '<strong>Optimal Approach (O(N) time, O(N) space):</strong> Use a Hash Map. As you iterate through the array, check if `target - current_element` exists in the map. If it exists, you have found the pair. If not, add the `current_element` and its index to the map.'
+                    },
+                    {
+                        q: 'Detect Cycle in a Directed Graph',
+                        a: '<strong>DFS Approach:</strong> Maintain a `visited` array and a `recursion_stack` array. If you encounter a node that is already in the `recursion_stack`, a cycle exists.<br><br><strong>BFS (Kahn\\\'s Algorithm):</strong> Compute in-degrees of all vertices. Push vertices with 0 in-degree to a queue. Process and reduce in-degrees of neighbors. If the number of processed nodes is less than total nodes, a cycle exists.'
+                    },
+                    {
+                        q: 'Valid Parentheses',
+                        a: '<strong>Approach:</strong> Use a Stack. Iterate through the string. When encountering an opening bracket, push it to the stack. When encountering a closing bracket, pop the top of the stack and check if it matches the corresponding opening bracket. If the stack is empty at the end, it is valid.'
+                    },
+                    {
+                        q: 'Merge Intervals',
+                        a: '<strong>Approach (O(N log N) time):</strong> First, sort the intervals based on their start times. Then, iterate through the sorted intervals. If the current interval overlaps with the last merged interval, update the end time of the last merged interval. Otherwise, add the current interval to the merged list.'
+                    }
+                ]
+            },
+            'system_design': {
+                title: 'Top System Design Questions',
+                count: '4 Questions',
+                questions: [
+                    {
+                        q: 'Design a URL Shortener (TinyURL)',
+                        a: '<strong>Key Components:</strong> Use Base62 encoding to generate a short hash. Store the mappings (short URL -> long URL) in a NoSQL database (like DynamoDB or Cassandra) for high scalability. Implement a distributed cache (like Redis) for fast redirection of frequent requests.'
+                    },
+                    {
+                        q: 'Explain the CAP Theorem',
+                        a: 'The CAP Theorem states that a distributed data store can only guarantee two out of the following three properties simultaneously:<br><br><strong>Consistency:</strong> Every read receives the most recent write or an error.<br><strong>Availability:</strong> Every request receives a non-error response.<br><strong>Partition Tolerance:</strong> The system continues to operate despite network partitions.'
+                    },
+                    {
+                        q: 'Design a Rate Limiter',
+                        a: '<strong>Algorithms:</strong><br>- <strong>Token Bucket:</strong> Add tokens at a fixed rate; requests consume tokens. Good for bursts.<br>- <strong>Sliding Window Log:</strong> Keep timestamps in a cache like Redis (Sorted Sets). High accuracy but higher memory usage.<br>- <strong>Sliding Window Counter:</strong> Hybrid approach using fixed windows and weighted counts.'
+                    },
+                    {
+                        q: 'Load Balancer vs. Reverse Proxy',
+                        a: '<strong>Load Balancer:</strong> Distributes incoming network traffic across multiple backend servers to prevent overload and ensure high availability.<br><br><strong>Reverse Proxy:</strong> Sits in front of servers, forwarding client requests to those servers. Often handles SSL termination, caching, compression, and enhanced security.'
+                    }
+                ]
+            },
+            'core_cs': {
+                title: 'Top Core CS Questions',
+                count: '4 Questions',
+                questions: [
+                    {
+                        q: 'Process vs. Thread',
+                        a: '<strong>Process:</strong> An independent executing program with its own memory space and system resources. Context switching is heavier.<br><br><strong>Thread:</strong> A lightweight unit of execution within a process. Multiple threads share the same memory space, making communication easier but requiring synchronization (locks/mutexes).'
+                    },
+                    {
+                        q: 'ACID Properties',
+                        a: 'Relational databases guarantee:<br><strong>Atomicity:</strong> Transactions are all-or-nothing.<br><strong>Consistency:</strong> Transactions take the database from one valid state to another.<br><strong>Isolation:</strong> Concurrent transactions do not interfere with each other.<br><strong>Durability:</strong> Once committed, data is saved permanently, even in crashes.'
+                    },
+                    {
+                        q: 'TCP vs. UDP',
+                        a: '<strong>TCP (Transmission Control Protocol):</strong> Connection-oriented, reliable, orders packets, and has flow/congestion control. Used for Web (HTTP), Email (SMTP).<br><br><strong>UDP (User Datagram Protocol):</strong> Connectionless, unreliable (fire-and-forget), no ordering or flow control, but very fast. Used for streaming, gaming, VoIP.'
+                    },
+                    {
+                        q: 'Browser Network Flow (What happens when you type google.com?)',
+                        a: '1. <strong>DNS Resolution:</strong> Browser checks cache, then asks OS/DNS servers for the IP address.<br>2. <strong>TCP Connection:</strong> 3-way handshake (SYN, SYN-ACK, ACK).<br>3. <strong>TLS Handshake:</strong> Secures the connection (HTTPS).<br>4. <strong>HTTP Request/Response:</strong> Browser requests data, server responds with HTML.<br>5. <strong>Rendering:</strong> Browser parses HTML, fetches CSS/JS, and renders the DOM.'
+                    }
+                ]
+            },
+            'hr': {
+                title: 'Top HR & Behavioral Questions',
+                count: '4 Questions',
+                questions: [
+                    {
+                        q: 'Tell me about a conflict with a teammate.',
+                        a: '<strong>Answer strategy (STAR method):</strong> Focus on your proactive communication. Explain the <strong>Situation</strong>, the <strong>Task</strong> you were trying to achieve, the <strong>Action</strong> you took to de-escalate (listening, finding common ground, compromising), and the positive <strong>Result</strong>.'
+                    },
+                    {
+                        q: 'What project are you most proud of?',
+                        a: '<strong>Answer strategy:</strong> Don\\\'t just describe what the team did; highlight your <em>specific contributions</em>. Discuss the technical challenges you overcame, the technologies you mastered, and the measurable impact (e.g., improved performance by X%, or delivered Y weeks early).'
+                    },
+                    {
+                        q: 'Tell me about a time you failed.',
+                        a: '<strong>Answer strategy:</strong> Own the mistake completely without shifting blame. The most important part is the resolution: focus heavily on what you learned, how you adapted your processes, and how you ensured the mistake never happened again.'
+                    },
+                    {
+                        q: 'Why do you want to work at this company?',
+                        a: '<strong>Answer strategy:</strong> Do your research. Reference their specific tech stack, recent product launches, or engineering blogs. Align their mission and culture with your own long-term career goals.'
+                    }
+                ]
+            }
+        };
+
+        function loadCategory(categoryId) {
+            const data = prepData[categoryId];
+            if (!data) return;
+
+            // Update Header
+            document.getElementById('prepTitle').textContent = data.title;
+            document.getElementById('prepCount').textContent = data.count;
+
+            // Build Accordion HTML
+            let html = '';
+            data.questions.forEach((item, index) => {
+                html += `
+                <div class="custom-card overflow-hidden">
+                    <button class="w-full flex items-center justify-between p-5 focus:outline-none hover:bg-cs-surface transition-colors" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.chevron').classList.toggle('rotate-180')">
+                        <div class="flex items-center gap-4 text-left">
+                            <span class="w-6 h-6 rounded bg-cs-mint/20 text-cs-mint flex items-center justify-center text-xs font-bold shrink-0">Q${index + 1}</span>
+                            <span class="font-bold text-cs-text text-sm">${item.q}</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-cs-faint text-xs transition-transform duration-300 chevron"></i>
+                    </button>
+                    <div class="p-5 pt-0 border-t border-cs-border hidden bg-cs-surface/50 transition-all duration-300">
+                        <p class="text-xs text-cs-muted leading-relaxed mt-4">${item.a}</p>
+                    </div>
+                </div>`;
+            });
+
+            document.getElementById('accordionContainer').innerHTML = html;
+
+            // Update active state on buttons
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                const icon = btn.dataset.icon;
+                if (btn.dataset.category === categoryId) {
+                    btn.className = "cat-btn w-full text-left p-4 custom-card border-l-2 border-cs-mint bg-cs-mint/5 flex items-center justify-between group transition-all";
+                    btn.querySelector('i:first-child').className = "fa-solid " + icon + " text-cs-mint w-5 text-center";
+                    btn.querySelector('span').className = "font-bold text-cs-text text-sm";
+                    btn.querySelector('i:last-child').className = "fa-solid fa-chevron-right text-cs-mint text-xs";
+                } else {
+                    btn.className = "cat-btn w-full text-left p-4 custom-card border-transparent hover:border-cs-border hover:bg-cs-surface flex items-center justify-between group transition-all";
+                    btn.querySelector('i:first-child').className = "fa-solid " + icon + " text-cs-muted group-hover:text-cs-mint transition-colors w-5 text-center";
+                    btn.querySelector('span').className = "font-bold text-cs-muted group-hover:text-cs-text text-sm transition-colors";
+                    btn.querySelector('i:last-child').className = "fa-solid fa-chevron-right text-cs-faint group-hover:text-cs-mint text-xs transition-colors";
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (localStorage.getItem('cc_session') !== 'active') {
+                window.location.href = 'test.html'; return;
+            }
+
+            let role = localStorage.getItem('cc_current_role') || "Student";
+            let details = JSON.parse(localStorage.getItem('cc_display_details')) || {};
+            let displayName = details["Name"] ? details["Name"].split(" ")[0] : role;
+            let displaySub = details["Dept"] ? `B.Tech ${details["Dept"]}` : role;
+            
+            document.getElementById('displayName').textContent = displayName;
+            document.getElementById('displayRole').textContent = displaySub;
+            
+            const initChar = displayName.charAt(0).toUpperCase();
+            if (document.getElementById('displayInitial')) document.getElementById('displayInitial').textContent = initChar;
+
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('cc_session'); localStorage.removeItem('cc_current_role'); localStorage.removeItem('cc_display_details');
+                window.location.href = 'test.html';
+            });
+
+            // Notification Logic
+            const bellBtn = document.getElementById('bellBtn');
+            const notificationPopup = document.getElementById('notificationPopup');
+
+            if (bellBtn && notificationPopup) {
+                bellBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (notificationPopup.classList.contains('hidden')) {
+                        notificationPopup.classList.remove('hidden'); notificationPopup.classList.add('flex');
+                    } else {
+                        notificationPopup.classList.add('hidden'); notificationPopup.classList.remove('flex');
+                    }
+                });
+                document.addEventListener('click', (e) => {
+                    if (!notificationPopup.contains(e.target) && !bellBtn.contains(e.target)) {
+                        notificationPopup.classList.add('hidden'); notificationPopup.classList.remove('flex');
+                    }
+                });
+            }
+
+
+            // Off-Campus Sidebar Logic
+            const offCampusToggle = document.getElementById('offCampusToggle');
+            const offCampusMenu = document.getElementById('offCampusMenu');
+            const offCampusChevron = document.getElementById('offCampusChevron');
+            if (offCampusToggle) {
+                offCampusToggle.addEventListener('click', () => {
+                    offCampusMenu.classList.toggle('hidden'); offCampusMenu.classList.toggle('flex'); offCampusChevron.classList.toggle('rotate-180');
+                });
+            }
+
+            // --- FOOLPROOF OFF-CAMPUS LINKS ENGINE ---
+            function generateOffCampusLinks() {
+                const targetRole = localStorage.getItem('cc_target_role') || 'Software Engineer';
+                const encodedRole = encodeURIComponent(targetRole);
+                const dashRole = targetRole.toLowerCase().replace(/\s+/g, '-'); 
+
+                document.getElementById('linkLinkedin').href = `https://www.linkedin.com/jobs/search/?keywords=${encodedRole}`;
+                document.getElementById('linkNaukri').href = `https://www.naukri.com/${dashRole}-jobs`;
+                document.getElementById('linkWellfound').href = `https://wellfound.com/role/${dashRole}`;
+            }
+
+            // Generate links immediately on page load
+            generateOffCampusLinks();
+            loadCategory('dsa');
+        });
+    </script>
+<script src="/app-api.js"></script>
+</body>
+</html>

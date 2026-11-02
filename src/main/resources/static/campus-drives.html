@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On-Campus | CampSkil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], poppins: ['Poppins', 'sans-serif'] },
+                    colors: { 
+                        cs: {
+                            bg: 'var(--cs-bg)', surface: 'var(--cs-surface)', card: 'var(--cs-card)',
+                            elevated: 'var(--cs-elevated)', mint: 'var(--cs-mint)', 'mint-hover': 'var(--cs-mint-hover)',
+                            text: 'var(--cs-text)', muted: 'var(--cs-text-secondary)', faint: 'var(--cs-faint)', border: 'var(--cs-border)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+                @layer base {
+            :root {
+                --cs-bg: #F0F9FF; --cs-surface: #F0F9FF; --cs-card: #FFFFFF; --cs-elevated: #F8FAFC;
+                --cs-mint: #48B0CA; --cs-mint-hover: #3695AB; --cs-text: #1E293B; --cs-text-secondary: #64748B;
+                --cs-faint: #94A3B8; --cs-border: rgba(14, 165, 233, 0.15); --cs-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            }
+            .dark {
+                --cs-bg: #0B1113; --cs-surface: #121A1C; --cs-card: #192426; --cs-elevated: #202D30;
+                --cs-mint: #48B0CA; --cs-mint-hover: #58C0D9; --cs-text: #EBF3F5; --cs-text-secondary: #A3B1B4;
+                --cs-faint: #657477; --cs-border: #202D30; --cs-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            }
+        }
+        body { background-color: var(--cs-bg); color: var(--cs-text); }
+        .custom-card { background-color: var(--cs-card); border: 1px solid var(--cs-border); border-radius: 1rem; box-shadow: var(--cs-shadow); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--cs-border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cs-mint); }
+        input, select { color: var(--cs-text) !important; }
+    </style>
+</head>
+<body class="font-sans antialiased h-screen overflow-hidden flex transition-colors duration-300">
+
+
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-cs-surface border-r border-cs-border hidden lg:flex flex-col h-screen relative z-20 shrink-0 transition-colors duration-300">
+        <div class="h-28 flex items-center justify-center p-4 border-b border-cs-border">
+            <img src="LOGO 2.png" alt="CampSkil Logo" class="h-24 w-auto object-contain drop-shadow-sm transition-all duration-300 dark:invert-0 dark:hue-rotate-0 invert hue-rotate-180">
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-4 py-6 custom-scrollbar">
+            <p class="text-[11px] font-bold text-cs-faint uppercase tracking-wider mb-4">Main Menu</p>
+            <nav class="flex flex-col gap-2">
+                <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-house w-5 text-center"></i> Overview
+                </a>
+                <a href="campus-drives.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-briefcase w-5 text-center"></i> On-Campus
+                </a>
+                <a href="credentials.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-certificate w-5 text-center"></i> Credentials
+                </a>
+            </nav>
+
+            <p class="text-[11px] font-bold text-cs-faint uppercase tracking-wider mt-8 mb-4">Tools</p>
+            <nav class="flex flex-col gap-2">
+                <a href="cv-builder.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-file-signature w-5 text-center"></i> ATS CV Builder
+                </a>
+                <a href="prep-guide.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-user-tie w-5 text-center"></i> Prep Guide
+                </a>
+                
+                <div>
+                    <button id="offCampusToggle" class="w-full flex items-center justify-between px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all focus:outline-none">
+                        <div class="flex items-center gap-3"><i class="fa-solid fa-earth-americas w-5 text-center"></i> Off-Campus</div>
+                        <i id="offCampusChevron" class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300"></i>
+                    </button>
+                    <div id="offCampusMenu" class="hidden flex-col gap-1 px-4 py-2 mt-1 mx-2 bg-cs-elevated border border-cs-border rounded-lg shadow-inner">
+                        <a href="#" id="linkLinkedin" target="_blank" class="flex items-center gap-3 px-3 py-2 text-xs text-cs-muted hover:text-[#0077b5] hover:bg-cs-bg rounded-md transition-all"><i class="fa-brands fa-linkedin text-sm"></i> Search LinkedIn</a>
+                        <a href="#" id="linkNaukri" target="_blank" class="flex items-center gap-3 px-3 py-2 text-xs text-cs-muted hover:text-[#275df5] hover:bg-cs-bg rounded-md transition-all"><div class="w-3 h-3 rounded bg-current text-cs-surface flex items-center justify-center font-bold text-[8px]">N</div> Naukri.com</a>
+                        <a href="#" id="linkWellfound" target="_blank" class="flex items-center gap-3 px-3 py-2 text-xs text-cs-muted hover:text-white hover:bg-cs-bg rounded-md transition-all"><i class="fa-brands fa-angellist text-sm"></i> Startup Jobs</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-cs-border">
+            <button id="logoutBtn" class="flex items-center gap-3 px-4 py-3 w-full text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-xl font-medium transition-all"><i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Log Out</button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-cs-bg transition-colors duration-300 relative z-10">
+        
+        <!-- Header -->
+        <header class="h-20 bg-cs-bg border-b border-cs-border flex items-center justify-between px-8 shrink-0 z-30 transition-colors duration-300">
+            <h1 class="font-poppins font-bold text-xl text-cs-text tracking-tight">Active Recruitment Drives
+            </h1>
+            <div class="flex items-center gap-5">
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-cs-surface border border-cs-border flex items-center justify-center text-cs-muted hover:text-cs-mint transition-colors">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:block"></i>
+                </button>
+                
+                <div class="relative">
+                    <button id="bellBtn" class="w-10 h-10 rounded-full bg-cs-surface border border-cs-border flex items-center justify-center text-cs-muted hover:text-cs-mint transition-colors relative focus:outline-none">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-cs-mint border-2 border-cs-bg rounded-full"></span>
+                    </button>
+                    <div id="notificationPopup" class="hidden absolute right-0 top-full mt-4 w-80 bg-cs-elevated border border-cs-border rounded-xl shadow-2xl p-4 z-50 flex-col gap-3 origin-top-right">
+                        <div class="flex items-center justify-between border-b border-cs-border pb-3">
+                            <span class="font-poppins font-bold text-sm text-cs-text flex items-center gap-2"><i class="fa-solid fa-bullhorn text-cs-mint"></i> TPO Notices</span>
+                            <span class="text-[10px] bg-cs-mint/20 text-cs-mint px-2 py-0.5 rounded-full font-bold">2 New</span>
+                        </div>
+                        <div class="flex flex-col gap-3 max-h-72 overflow-y-auto custom-scrollbar">
+                            <div class="bg-cs-card border-l-2 border-cs-mint p-3 rounded-r-lg shadow-sm">
+                                <div class="flex justify-between items-center mb-1"><span class="text-xs font-bold text-cs-text">Resume Verification</span><span class="text-[9px] text-cs-faint">2 hrs ago</span></div>
+                                <p class="text-[11px] text-cs-muted leading-relaxed">All final year CS/IT students must submit their ATS-formatted resumes for dean's approval by EOD Friday.</p>
+                            </div>
+                            <div class="bg-cs-card border-l-2 border-cs-border p-3 rounded-r-lg shadow-sm">
+                                <div class="flex justify-between items-center mb-1"><span class="text-xs font-bold text-cs-text">Mock Interviews</span><span class="text-[9px] text-cs-faint">Yesterday</span></div>
+                                <p class="text-[11px] text-cs-muted leading-relaxed">Alumni network will be conducting technical mock interviews next week. Registration links sent to college email.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="credentials.html" class="flex items-center gap-3 pl-5 border-l border-cs-border focus:outline-none group hover:opacity-80 transition-opacity bg-transparent cursor-pointer">
+                    <div class="text-right hidden md:block">
+                        <div id="displayName" class="text-sm font-bold text-cs-text tracking-wide uppercase">STUDENT</div>
+                        <div id="displayRole" class="text-[10px] text-cs-faint font-medium">B.Tech CSE</div>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-cs-mint text-[#0B1214] flex items-center justify-center font-bold text-lg shadow-sm border border-cs-mint-hover group-hover:scale-105 transition-transform">
+                        <span id="displayInitial">S</span>
+                    </div>
+                </a>
+            </div>
+        </header>
+
+        <!-- Scrollable Workspace (Drives Content) -->
+        <div class="flex-1 overflow-y-auto p-8 custom-scrollbar relative z-10">
+            <div class="max-w-[1400px] mx-auto flex flex-col gap-6">
+
+                <!-- Filter Bar -->
+                <div class="custom-card p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="relative w-full md:w-96 flex items-center">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 text-cs-faint"></i>
+                        <input type="text" id="searchInput" placeholder="Search by role or company..." class="w-full py-2.5 pl-10 pr-4 rounded-lg text-sm bg-cs-surface border border-cs-border focus:outline-none focus:border-cs-mint transition-colors">
+                    </div>
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <select id="typeFilter" class="w-full md:w-auto py-2.5 px-4 rounded-lg text-sm bg-cs-surface border border-cs-border focus:outline-none focus:border-cs-mint cursor-pointer">
+                            <option value="all">All Company Types</option>
+                            <option value="product">Product-Based</option>
+                            <option value="service">Service-Based</option>
+                            <option value="startup">Startup / Fintech</option>
+                        </select>
+                        <select id="statusFilter" class="w-full md:w-auto py-2.5 px-4 rounded-lg text-sm bg-cs-surface border border-cs-border focus:outline-none focus:border-cs-mint cursor-pointer">
+                            <option value="all">Any CV Status</option>
+                            <option value="accepted">CV Accepted</option>
+                            <option value="review">Under Review</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Grid of Drives -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-12" id="drivesGrid">
+                    
+                    <!-- 1. Google -->
+                    <div class="custom-card p-6 flex flex-col transition-all duration-300 hover:border-cs-mint/50 hover:shadow-lg drive-card" data-name="google india" data-role="software engineer" data-type="product" data-status="accepted">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-white flex items-center justify-center border border-cs-border shadow-sm text-black text-xl font-bold">G</div>
+                            <span class="text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 py-1 px-2 rounded-md uppercase tracking-wider">Already Applied</span>
+                        </div>
+                        <h3 class="font-poppins font-bold text-xl text-cs-text">Google India</h3>
+                        <p class="text-sm text-cs-mint font-medium mb-3">Software Engineer (SDE-1)</p>
+                        
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">React</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Node.js</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Python</span>
+                        </div>
+                        <div class="flex flex-col gap-2 mb-4">
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-sack-dollar w-4"></i> <span>Package: <strong class="text-cs-text">24 LPA</strong></span></div>
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-location-dot w-4"></i> <span>Location: <strong class="text-cs-text">Bangalore / Hyderabad</strong></span></div>
+                        </div>
+                        
+                        <div class="mb-5 p-2.5 rounded-lg bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
+                            <span class="text-xs font-medium text-cs-text">CV Status: <span class="text-emerald-500 font-bold">Accepted (OA Sent)</span></span>
+                        </div>
+                        
+                        <div class="mt-auto pt-4 border-t border-cs-border flex justify-between items-center">
+                            <span class="text-[10px] text-cs-faint font-medium">Applied Oct 2</span>
+                            <button onclick="toggleApply(this)" data-state="applied" class="bg-cs-surface border border-red-500/50 text-red-400 hover:bg-red-500/10 font-bold py-2 px-4 rounded-lg text-xs transition-colors shadow-sm">Withdraw App</button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Microsoft -->
+                    <div class="custom-card p-6 flex flex-col transition-all duration-300 hover:border-cs-mint/50 hover:shadow-lg drive-card" data-name="microsoft" data-role="data analyst" data-type="product" data-status="review">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-[#00A4EF] flex items-center justify-center border border-cs-border shadow-sm text-white text-xl"><i class="fa-brands fa-windows"></i></div>
+                            <span class="text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 py-1 px-2 rounded-md uppercase tracking-wider">Already Applied</span>
+                        </div>
+                        <h3 class="font-poppins font-bold text-xl text-cs-text">Microsoft</h3>
+                        <p class="text-sm text-cs-mint font-medium mb-3">Data Analyst</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">SQL</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Python</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">PowerBI</span>
+                        </div>
+                        <div class="flex flex-col gap-2 mb-4">
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-sack-dollar w-4"></i> <span>Package: <strong class="text-cs-text">18 LPA</strong></span></div>
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-location-dot w-4"></i> <span>Location: <strong class="text-cs-text">Noida / Bangalore</strong></span></div>
+                        </div>
+                        <div class="mb-5 p-2.5 rounded-lg bg-yellow-500/5 border border-yellow-500/20 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-yellow-500 text-sm"></i>
+                            <span class="text-xs font-medium text-cs-text">CV Status: <span class="text-yellow-500 font-bold">Under Review</span></span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-cs-border flex justify-between items-center">
+                            <span class="text-[10px] text-cs-faint font-medium">Applied Sep 28</span>
+                            <button onclick="toggleApply(this)" data-state="applied" class="bg-cs-surface border border-red-500/50 text-red-400 hover:bg-red-500/10 font-bold py-2 px-4 rounded-lg text-xs transition-colors shadow-sm">Withdraw App</button>
+                        </div>
+                    </div>
+
+                    <!-- 3. Amazon -->
+                    <div class="custom-card p-6 flex flex-col transition-all duration-300 hover:border-cs-mint/50 hover:shadow-lg drive-card" data-name="amazon aws" data-role="cloud architect" data-type="product" data-status="none">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-white flex items-center justify-center border border-cs-border shadow-sm text-black text-xl"><i class="fa-brands fa-amazon"></i></div>
+                            <span class="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 py-1 px-2 rounded-md uppercase tracking-wider">Accepting Applications</span>
+                        </div>
+                        <h3 class="font-poppins font-bold text-xl text-cs-text">Amazon AWS</h3>
+                        <p class="text-sm text-cs-mint font-medium mb-3">Cloud Architect</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">AWS</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Linux</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Networking</span>
+                        </div>
+                        <div class="flex flex-col gap-2 mb-4">
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-sack-dollar w-4"></i> <span>Package: <strong class="text-cs-text">22 LPA</strong></span></div>
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-location-dot w-4"></i> <span>Location: <strong class="text-cs-text">Hyderabad</strong></span></div>
+                        </div>
+                        <div class="mb-5 p-2.5 rounded-lg bg-cs-surface border border-cs-border flex items-center gap-2">
+                            <i class="fa-regular fa-file text-cs-muted text-sm"></i>
+                            <span class="text-xs font-medium text-cs-muted">CV Status: Not Submitted</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-cs-border flex justify-between items-center">
+                            <span class="text-[10px] text-cs-faint font-medium">Deadline: Oct 15</span>
+                            <button onclick="toggleApply(this)" data-state="open" class="bg-cs-mint text-[#0B1214] font-bold py-2 px-5 rounded-lg text-xs transition-colors shadow-md">Apply Now</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Deloitte -->
+                    <div class="custom-card p-6 flex flex-col transition-all duration-300 hover:border-cs-mint/50 hover:shadow-lg drive-card" data-name="deloitte usi" data-role="technology analyst" data-type="service" data-status="none">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-black flex items-center justify-center border border-cs-border shadow-sm text-white font-bold text-2xl">D.</div>
+                            <span class="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 py-1 px-2 rounded-md uppercase tracking-wider">Accepting Applications</span>
+                        </div>
+                        <h3 class="font-poppins font-bold text-xl text-cs-text">Deloitte USI</h3>
+                        <p class="text-sm text-cs-mint font-medium mb-3">Technology Analyst</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Java</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">SQL</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Communication</span>
+                        </div>
+                        <div class="flex flex-col gap-2 mb-4">
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-sack-dollar w-4"></i> <span>Package: <strong class="text-cs-text">8 LPA</strong></span></div>
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-location-dot w-4"></i> <span>Location: <strong class="text-cs-text">Pan India</strong></span></div>
+                        </div>
+                        <div class="mb-5 p-2.5 rounded-lg bg-cs-surface border border-cs-border flex items-center gap-2">
+                            <i class="fa-regular fa-file text-cs-muted text-sm"></i>
+                            <span class="text-xs font-medium text-cs-muted">CV Status: Not Submitted</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-cs-border flex justify-between items-center">
+                            <span class="text-[10px] text-cs-faint font-medium">Deadline: Oct 12</span>
+                            <button onclick="toggleApply(this)" data-state="open" class="bg-cs-mint text-[#0B1214] font-bold py-2 px-5 rounded-lg text-xs transition-colors shadow-md">Apply Now</button>
+                        </div>
+                    </div>
+
+                    <!-- 5. TCS -->
+                    <div class="custom-card p-6 flex flex-col transition-all duration-300 opacity-60 hover:opacity-100 drive-card" data-name="tcs digital" data-role="system engineer" data-type="service" data-status="none">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-white flex items-center justify-center border border-cs-border shadow-sm text-[#000] font-bold">TCS</div>
+                            <span class="text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 py-1 px-2 rounded-md uppercase tracking-wider">Closed</span>
+                        </div>
+                        <h3 class="font-poppins font-bold text-xl text-cs-text">TCS Digital</h3>
+                        <p class="text-sm text-cs-muted font-medium mb-3">System Engineer</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Java</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">C++</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">SQL</span>
+                        </div>
+                        <div class="flex flex-col gap-2 mb-4">
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-sack-dollar w-4"></i> <span>Package: <strong class="text-cs-text">7 LPA</strong></span></div>
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-location-dot w-4"></i> <span>Location: <strong class="text-cs-text">Pune / Mumbai</strong></span></div>
+                        </div>
+                        <div class="mb-5 p-2.5 rounded-lg bg-red-500/5 border border-red-500/20 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-xmark text-red-500 text-sm"></i>
+                            <span class="text-xs font-medium text-cs-text">CV Status: <span class="text-red-500 font-bold">Rejected (Screening)</span></span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-cs-border flex justify-between items-center">
+                            <span class="text-[10px] text-cs-faint font-medium">Closed Oct 01</span>
+                            <button disabled class="bg-cs-elevated border border-cs-border text-cs-faint font-bold py-2 px-5 rounded-lg text-xs cursor-not-allowed">Closed</button>
+                        </div>
+                    </div>
+
+                    <!-- 6. Meta -->
+                    <div class="custom-card p-6 flex flex-col transition-all duration-300 hover:border-cs-mint/50 hover:shadow-lg drive-card" data-name="meta" data-role="frontend engineer" data-type="product" data-status="none">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-blue-600 flex items-center justify-center border border-cs-border shadow-sm text-white text-2xl"><i class="fa-brands fa-meta"></i></div>
+                            <span class="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 py-1 px-2 rounded-md uppercase tracking-wider">Accepting Applications</span>
+                        </div>
+                        <h3 class="font-poppins font-bold text-xl text-cs-text">Meta</h3>
+                        <p class="text-sm text-cs-mint font-medium mb-3">Frontend Engineer</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">React</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">JavaScript</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Tailwind</span>
+                        </div>
+                        <div class="flex flex-col gap-2 mb-4">
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-sack-dollar w-4"></i> <span>Package: <strong class="text-cs-text">30 LPA</strong></span></div>
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-location-dot w-4"></i> <span>Location: <strong class="text-cs-text">Gurgaon</strong></span></div>
+                        </div>
+                        <div class="mb-5 p-2.5 rounded-lg bg-cs-surface border border-cs-border flex items-center gap-2">
+                            <i class="fa-regular fa-file text-cs-muted text-sm"></i>
+                            <span class="text-xs font-medium text-cs-muted">CV Status: Not Submitted</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-cs-border flex justify-between items-center">
+                            <span class="text-[10px] text-cs-faint font-medium">Deadline: Oct 20</span>
+                            <button onclick="toggleApply(this)" data-state="open" class="bg-cs-mint text-[#0B1214] font-bold py-2 px-5 rounded-lg text-xs transition-colors shadow-md">Apply Now</button>
+                        </div>
+                    </div>
+
+                    <!-- 7. Stripe -->
+                    <div class="custom-card p-6 flex flex-col transition-all duration-300 hover:border-cs-mint/50 hover:shadow-lg drive-card" data-name="stripe" data-role="backend engineer" data-type="startup" data-status="accepted">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-[#635BFF] flex items-center justify-center border border-cs-border shadow-sm text-white text-2xl"><i class="fa-brands fa-stripe-s"></i></div>
+                            <span class="text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 py-1 px-2 rounded-md uppercase tracking-wider">Already Applied</span>
+                        </div>
+                        <h3 class="font-poppins font-bold text-xl text-cs-text">Stripe</h3>
+                        <p class="text-sm text-cs-mint font-medium mb-3">Backend Engineer</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Ruby</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Go</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">API Design</span>
+                        </div>
+                        <div class="flex flex-col gap-2 mb-4">
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-sack-dollar w-4"></i> <span>Package: <strong class="text-cs-text">28 LPA</strong></span></div>
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-location-dot w-4"></i> <span>Location: <strong class="text-cs-text">Remote</strong></span></div>
+                        </div>
+                        <div class="mb-5 p-2.5 rounded-lg bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
+                            <span class="text-xs font-medium text-cs-text">CV Status: <span class="text-emerald-500 font-bold">Accepted</span></span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-cs-border flex justify-between items-center">
+                            <span class="text-[10px] text-cs-faint font-medium">Applied Oct 05</span>
+                            <button onclick="toggleApply(this)" data-state="applied" class="bg-cs-surface border border-red-500/50 text-red-400 hover:bg-red-500/10 font-bold py-2 px-4 rounded-lg text-xs transition-colors shadow-sm">Withdraw App</button>
+                        </div>
+                    </div>
+
+                    <!-- 8. Infosys -->
+                    <div class="custom-card p-6 flex flex-col transition-all duration-300 hover:border-cs-mint/50 hover:shadow-lg drive-card" data-name="infosys" data-role="specialist programmer" data-type="service" data-status="none">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-[#007CC3] flex items-center justify-center border border-cs-border shadow-sm text-white font-bold text-xl">in</div>
+                            <span class="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 py-1 px-2 rounded-md uppercase tracking-wider">Accepting Applications</span>
+                        </div>
+                        <h3 class="font-poppins font-bold text-xl text-cs-text">Infosys</h3>
+                        <p class="text-sm text-cs-mint font-medium mb-3">Specialist Programmer</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Python</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">DBMS</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Algorithms</span>
+                        </div>
+                        <div class="flex flex-col gap-2 mb-4">
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-sack-dollar w-4"></i> <span>Package: <strong class="text-cs-text">9.5 LPA</strong></span></div>
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-location-dot w-4"></i> <span>Location: <strong class="text-cs-text">Mysore / Pune</strong></span></div>
+                        </div>
+                        <div class="mb-5 p-2.5 rounded-lg bg-cs-surface border border-cs-border flex items-center gap-2">
+                            <i class="fa-regular fa-file text-cs-muted text-sm"></i>
+                            <span class="text-xs font-medium text-cs-muted">CV Status: Not Submitted</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-cs-border flex justify-between items-center">
+                            <span class="text-[10px] text-cs-faint font-medium">Deadline: Oct 25</span>
+                            <button onclick="toggleApply(this)" data-state="open" class="bg-cs-mint text-[#0B1214] font-bold py-2 px-5 rounded-lg text-xs transition-colors shadow-md">Apply Now</button>
+                        </div>
+                    </div>
+
+                    <!-- 9. Uber -->
+                    <div class="custom-card p-6 flex flex-col transition-all duration-300 hover:border-cs-mint/50 hover:shadow-lg drive-card" data-name="uber" data-role="mobile developer" data-type="product" data-status="none">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-black flex items-center justify-center border border-cs-border shadow-sm text-white text-xl"><i class="fa-brands fa-uber"></i></div>
+                            <span class="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 py-1 px-2 rounded-md uppercase tracking-wider">Accepting Applications</span>
+                        </div>
+                        <h3 class="font-poppins font-bold text-xl text-cs-text">Uber</h3>
+                        <p class="text-sm text-cs-mint font-medium mb-3">Mobile Developer</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Kotlin</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Swift</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Java</span>
+                        </div>
+                        <div class="flex flex-col gap-2 mb-4">
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-sack-dollar w-4"></i> <span>Package: <strong class="text-cs-text">25 LPA</strong></span></div>
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-location-dot w-4"></i> <span>Location: <strong class="text-cs-text">Bangalore</strong></span></div>
+                        </div>
+                        <div class="mb-5 p-2.5 rounded-lg bg-cs-surface border border-cs-border flex items-center gap-2">
+                            <i class="fa-regular fa-file text-cs-muted text-sm"></i>
+                            <span class="text-xs font-medium text-cs-muted">CV Status: Not Submitted</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-cs-border flex justify-between items-center">
+                            <span class="text-[10px] text-cs-faint font-medium">Deadline: Oct 18</span>
+                            <button onclick="toggleApply(this)" data-state="open" class="bg-cs-mint text-[#0B1214] font-bold py-2 px-5 rounded-lg text-xs transition-colors shadow-md">Apply Now</button>
+                        </div>
+                    </div>
+
+                    <!-- 10. Netflix -->
+                    <div class="custom-card p-6 flex flex-col transition-all duration-300 hover:border-cs-mint/50 hover:shadow-lg drive-card" data-name="netflix" data-role="data engineer" data-type="product" data-status="none">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-black flex items-center justify-center border border-cs-border shadow-sm text-red-600 text-3xl font-black">N</div>
+                            <span class="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 py-1 px-2 rounded-md uppercase tracking-wider">Accepting Applications</span>
+                        </div>
+                        <h3 class="font-poppins font-bold text-xl text-cs-text">Netflix</h3>
+                        <p class="text-sm text-cs-mint font-medium mb-3">Data Engineer</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Python</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">Spark</span>
+                            <span class="text-[10px] font-medium bg-cs-surface border border-cs-border text-cs-muted px-2 py-0.5 rounded">AWS</span>
+                        </div>
+                        <div class="flex flex-col gap-2 mb-4">
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-sack-dollar w-4"></i> <span>Package: <strong class="text-cs-text">35 LPA</strong></span></div>
+                            <div class="flex items-center gap-2 text-xs text-cs-muted"><i class="fa-solid fa-location-dot w-4"></i> <span>Location: <strong class="text-cs-text">Remote</strong></span></div>
+                        </div>
+                        <div class="mb-5 p-2.5 rounded-lg bg-cs-surface border border-cs-border flex items-center gap-2">
+                            <i class="fa-regular fa-file text-cs-muted text-sm"></i>
+                            <span class="text-xs font-medium text-cs-muted">CV Status: Not Submitted</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-cs-border flex justify-between items-center">
+                            <span class="text-[10px] text-cs-faint font-medium">Deadline: Oct 22</span>
+                            <button onclick="toggleApply(this)" data-state="open" class="bg-cs-mint text-[#0B1214] font-bold py-2 px-5 rounded-lg text-xs transition-colors shadow-md">Apply Now</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- LIVE FILTER ENGINE ---
+        const searchInput = document.getElementById('searchInput');
+        const typeFilter = document.getElementById('typeFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const cards = document.querySelectorAll('.drive-card');
+
+        function filterDrives() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const typeValue = typeFilter.value;
+            const statusValue = statusFilter.value;
+
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                const role = card.getAttribute('data-role');
+                const type = card.getAttribute('data-type');
+                const status = card.getAttribute('data-status');
+
+                const matchesSearch = name.includes(searchTerm) || role.includes(searchTerm);
+                const matchesType = (typeValue === 'all') || (type === typeValue);
+                const matchesStatus = (statusValue === 'all') || (status === statusValue);
+
+                if (matchesSearch && matchesType && matchesStatus) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        if(searchInput) searchInput.addEventListener('input', filterDrives);
+        if(typeFilter) typeFilter.addEventListener('change', filterDrives);
+        if(statusFilter) statusFilter.addEventListener('change', filterDrives);
+
+        let isInitializing = false;
+        function updateDashboardSync() {
+            if (isInitializing) return;
+            const cards = document.querySelectorAll('.drive-card');
+            let apps = [];
+            cards.forEach(card => {
+                const status = card.getAttribute('data-status');
+                if (status !== 'none') {
+                    const name = card.querySelector('h3').textContent;
+                    const role = card.querySelector('p').textContent;
+                    let logoHtml = card.querySelector('.w-14.h-14').outerHTML;
+                    // make the logo slightly smaller for the table
+                    logoHtml = logoHtml.replace('w-14 h-14', 'w-8 h-8').replace('text-xl', 'text-sm').replace('text-2xl', 'text-base').replace('text-3xl', 'text-lg');
+                    let dateText = card.querySelector('.mt-auto span:first-child').textContent;
+                    dateText = dateText.replace('Applied ', '').replace('Closed ', '');
+                    if (dateText.includes('Deadline')) {
+                        const today = new Date();
+                        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                        dateText = months[today.getMonth()] + ' ' + String(today.getDate()).padStart(2, '0');
+                    }
+                    apps.push({ name, role, date: dateText + ', 2026', status, logoHtml });
+                }
+            });
+            localStorage.setItem('cc_applications', JSON.stringify(apps));
+        }
+
+        // --- INTERACTIVE APPLY BUTTON LOGIC ---
+        function toggleApply(btn) {
+            const currentState = btn.getAttribute('data-state');
+            const card = btn.closest('.drive-card');
+            const cardHeader = card.querySelector('.flex.justify-between span');
+            const cvStatusBox = btn.parentElement.previousElementSibling;
+            const dateSpan = btn.previousElementSibling;
+
+            if (currentState === 'open') {
+                btn.setAttribute('data-state', 'applied');
+                btn.className = "bg-cs-surface border border-red-500/50 text-red-400 hover:bg-red-500/10 font-bold py-2 px-4 rounded-lg text-xs transition-colors shadow-sm";
+                btn.textContent = "Withdraw App";
+                
+                cardHeader.className = "text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 py-1 px-2 rounded-md uppercase tracking-wider";
+                cardHeader.textContent = "Already Applied";
+
+                cvStatusBox.className = "mb-5 p-2.5 rounded-lg bg-yellow-500/5 border border-yellow-500/20 flex items-center gap-2";
+                cvStatusBox.innerHTML = `<i class="fa-solid fa-clock-rotate-left text-yellow-500 text-sm"></i> <span class="text-xs font-medium text-cs-text">CV Status: <span class="text-yellow-500 font-bold">Under Review</span></span>`;
+                
+                card.setAttribute('data-status', 'review');
+                
+                const today = new Date();
+                const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                dateSpan.textContent = 'Applied ' + months[today.getMonth()] + ' ' + String(today.getDate()).padStart(2, '0');
+
+            } else if (currentState === 'applied') {
+                btn.setAttribute('data-state', 'open');
+                btn.className = "bg-cs-mint text-[#0B1214] font-bold py-2 px-5 rounded-lg text-xs transition-colors shadow-md";
+                btn.textContent = "Apply Now";
+
+                cardHeader.className = "text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 py-1 px-2 rounded-md uppercase tracking-wider";
+                cardHeader.textContent = "Accepting Applications";
+
+                cvStatusBox.className = "mb-5 p-2.5 rounded-lg bg-cs-surface border border-cs-border flex items-center gap-2";
+                cvStatusBox.innerHTML = `<i class="fa-regular fa-file text-cs-muted text-sm"></i> <span class="text-xs font-medium text-cs-muted">CV Status: Not Submitted</span>`;
+                
+                card.setAttribute('data-status', 'none');
+                dateSpan.textContent = 'Deadline: Oct 30';
+            }
+            filterDrives();
+            updateDashboardSync();
+        }
+
+        // --- THEME & DASHBOARD UTILS ---
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (localStorage.getItem('cc_session') !== 'active') {
+                window.location.href = 'test.html'; return;
+            }
+
+            let role = localStorage.getItem('cc_current_role') || "Student";
+            let details = JSON.parse(localStorage.getItem('cc_display_details')) || {};
+            let displayName = details["Name"] ? details["Name"].split(" ")[0] : role;
+            let displaySub = details["Dept"] ? `B.Tech ${details["Dept"]}` : role;
+            
+            document.getElementById('displayName').textContent = displayName;
+            document.getElementById('displayRole').textContent = displaySub;
+            
+            const initChar = displayName.charAt(0).toUpperCase();
+            if (document.getElementById('displayInitial')) document.getElementById('displayInitial').textContent = initChar;
+
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('cc_session'); localStorage.removeItem('cc_current_role'); localStorage.removeItem('cc_display_details');
+                window.location.href = 'test.html';
+            });
+
+            // Notification Logic
+            const bellBtn = document.getElementById('bellBtn');
+            const notificationPopup = document.getElementById('notificationPopup');
+
+            if (bellBtn && notificationPopup) {
+                bellBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (notificationPopup.classList.contains('hidden')) {
+                        notificationPopup.classList.remove('hidden'); notificationPopup.classList.add('flex');
+                    } else {
+                        notificationPopup.classList.add('hidden'); notificationPopup.classList.remove('flex');
+                    }
+                });
+                document.addEventListener('click', (e) => {
+                    if (!notificationPopup.contains(e.target) && !bellBtn.contains(e.target)) {
+                        notificationPopup.classList.add('hidden'); notificationPopup.classList.remove('flex');
+                    }
+                });
+            }
+
+
+            // Off-Campus Sidebar Logic
+            const offCampusToggle = document.getElementById('offCampusToggle');
+            const offCampusMenu = document.getElementById('offCampusMenu');
+            const offCampusChevron = document.getElementById('offCampusChevron');
+            if (offCampusToggle) {
+                offCampusToggle.addEventListener('click', () => {
+                    offCampusMenu.classList.toggle('hidden'); offCampusMenu.classList.toggle('flex'); offCampusChevron.classList.toggle('rotate-180');
+                });
+            }
+
+            // --- FOOLPROOF OFF-CAMPUS LINKS ENGINE ---
+            function generateOffCampusLinks() {
+                const targetRole = localStorage.getItem('cc_target_role') || 'Software Engineer';
+                const encodedRole = encodeURIComponent(targetRole);
+                const dashRole = targetRole.toLowerCase().replace(/\s+/g, '-'); 
+
+                document.getElementById('linkLinkedin').href = `https://www.linkedin.com/jobs/search/?keywords=${encodedRole}`;
+                document.getElementById('linkNaukri').href = `https://www.naukri.com/${dashRole}-jobs`;
+                document.getElementById('linkWellfound').href = `https://wellfound.com/role/${dashRole}`;
+            }
+
+            // Generate links immediately on page load
+            generateOffCampusLinks();
+
+            if (!localStorage.getItem('cc_applications')) {
+                updateDashboardSync();
+            } else {
+                isInitializing = true;
+                const apps = JSON.parse(localStorage.getItem('cc_applications'));
+                const cards = document.querySelectorAll('.drive-card');
+                cards.forEach(card => {
+                    const name = card.querySelector('h3').textContent;
+                    const app = apps.find(a => a.name === name);
+                    const currentStatus = card.getAttribute('data-status');
+                    
+                    if (app && currentStatus === 'none') {
+                        const btn = card.querySelector('button');
+                        if (btn && btn.textContent.trim() === 'Apply Now') {
+                            btn.click();
+                        }
+                    } else if (!app && (currentStatus === 'review' || currentStatus === 'accepted')) {
+                        const btn = card.querySelector('button');
+                        if (btn && btn.textContent.trim() === 'Withdraw App') {
+                            btn.click();
+                        }
+                    }
+                });
+                isInitializing = false;
+                updateDashboardSync(); // Final sync to ensure consistency
+            }
+
+        });
+    </script>
+<script src="/app-api.js"></script>
+</body>
+</html>

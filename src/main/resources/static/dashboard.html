@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | CampSkil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        // Automatic Theme Reader
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], poppins: ['Poppins', 'sans-serif'] },
+                    colors: { 
+                        cs: {
+                            bg: 'var(--cs-bg)', surface: 'var(--cs-surface)', card: 'var(--cs-card)',
+                            elevated: 'var(--cs-elevated)', mint: 'var(--cs-mint)', 'mint-hover': 'var(--cs-mint-hover)',
+                            text: 'var(--cs-text)', muted: 'var(--cs-text-secondary)', faint: 'var(--cs-faint)', border: 'var(--cs-border)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+                @layer base {
+            :root {
+                --cs-bg: #F0F9FF; --cs-surface: #F0F9FF; --cs-card: #FFFFFF; --cs-elevated: #F8FAFC;
+                --cs-mint: #48B0CA; --cs-mint-hover: #3695AB; --cs-text: #1E293B; --cs-text-secondary: #64748B;
+                --cs-faint: #94A3B8; --cs-border: rgba(14, 165, 233, 0.15); --cs-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            }
+            .dark {
+                --cs-bg: #0B1113; --cs-surface: #121A1C; --cs-card: #192426; --cs-elevated: #202D30;
+                --cs-mint: #48B0CA; --cs-mint-hover: #58C0D9; --cs-text: #EBF3F5; --cs-text-secondary: #A3B1B4;
+                --cs-faint: #657477; --cs-border: #202D30; --cs-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            }
+        }
+        body { background-color: var(--cs-bg); color: var(--cs-text); }
+        .custom-card { background-color: var(--cs-card); border: 1px solid var(--cs-border); border-radius: 1rem; box-shadow: var(--cs-shadow); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--cs-border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cs-mint); }
+    </style>
+</head>
+<body class="font-sans antialiased h-screen overflow-hidden flex transition-colors duration-300">
+
+    <!-- FIRST TIME ONBOARDING MODAL -->
+    <div id="onboardingModal" class="fixed inset-0 z-50 hidden flex items-center justify-center transition-opacity duration-300 opacity-0">
+        <div class="absolute inset-0 bg-cs-bg/90 backdrop-blur-md"></div>
+        <div class="relative w-full max-w-lg bg-cs-card border border-cs-border rounded-2xl p-8 shadow-2xl transform scale-95 transition-transform duration-300" id="onboardingBox">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-cs-surface border border-cs-mint/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-rocket text-2xl text-cs-mint"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-cs-text mb-2">Let's tailor your experience.</h2>
+                <p class="text-sm text-cs-muted">Tell us what you're aiming for so we can map the right campus drives and off-campus opportunities to your dashboard.</p>
+            </div>
+
+            <form id="onboardingForm" class="flex flex-col gap-5">
+                <div>
+                    <label class="block text-xs font-bold text-cs-muted uppercase tracking-wider mb-2">Desired Profession</label>
+                    <div class="relative">
+                        <select id="userTargetRole" required class="w-full py-3 px-4 rounded-lg text-sm text-cs-text bg-cs-elevated border border-cs-border focus:outline-none focus:border-cs-mint appearance-none cursor-pointer">
+                            <option value="" disabled selected>Select your target role...</option>
+                            <option value="Software Engineer">Software Engineer</option>
+                            <option value="Data Analyst">Data Analyst</option>
+                            <option value="Frontend Developer">Frontend Developer</option>
+                            <option value="Backend Developer">Backend Developer</option>
+                            <option value="Cloud Architect">Cloud Architect</option>
+                            <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-cs-faint text-xs pointer-events-none"></i>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-cs-muted uppercase tracking-wider mb-2">Core Skills</label>
+                    <input type="text" id="userCoreSkills" placeholder="e.g. Python, React, SQL, AWS" required class="w-full py-3 px-4 rounded-lg text-sm text-cs-text bg-cs-elevated border border-cs-border focus:outline-none focus:border-cs-mint">
+                    <p class="text-[10px] text-cs-faint mt-1">Separate skills with commas.</p>
+                </div>
+
+                <button type="submit" class="mt-4 w-full bg-cs-mint hover:bg-cs-mint-hover text-[#0B1214] font-bold py-3.5 rounded-lg text-sm transition-all shadow-md flex items-center justify-center gap-2">
+                    Save Profile & Launch <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-cs-surface border-r border-cs-border hidden lg:flex flex-col h-screen relative z-20 shrink-0 transition-colors duration-300">
+        <div class="h-28 flex items-center justify-center p-4 border-b border-cs-border">
+            <img src="LOGO 2.png" alt="CampSkil Logo" class="h-24 w-auto object-contain drop-shadow-sm transition-all duration-300 dark:invert-0 dark:hue-rotate-0 invert hue-rotate-180">
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-4 py-6 custom-scrollbar">
+            <p class="text-[11px] font-bold text-cs-faint uppercase tracking-wider mb-4">Main Menu</p>
+            <nav class="flex flex-col gap-2">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-cs-mint/10 text-cs-mint rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-house w-5 text-center"></i> Overview
+                </a>
+                <a href="campus-drives.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">   <i class="fa-solid fa-briefcase w-5 text-center"></i> On-Campus
+                </a>
+                <a href="credentials.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-certificate w-5 text-center"></i> Credentials
+                </a>
+            </nav>
+
+            <p class="text-[11px] font-bold text-cs-faint uppercase tracking-wider mt-8 mb-4">Tools</p>
+            <nav class="flex flex-col gap-2">
+                <a href="cv-builder.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-file-signature w-5 text-center"></i> ATS CV Builder
+                </a>
+                <a href="prep-guide.html" class="flex items-center gap-3 px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all">
+                    <i class="fa-solid fa-user-tie w-5 text-center"></i> Prep Guide
+                </a>
+                
+                <!-- Off-Campus Collapsible Dropdown -->
+                <div>
+                    <button id="offCampusToggle" class="w-full flex items-center justify-between px-4 py-3 text-cs-muted hover:text-cs-mint hover:bg-cs-mint/5 rounded-xl font-medium transition-all focus:outline-none">
+                        <div class="flex items-center gap-3"><i class="fa-solid fa-earth-americas w-5 text-center"></i> Off-Campus</div>
+                        <i id="offCampusChevron" class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300"></i>
+                    </button>
+                    
+                    <div id="offCampusMenu" class="hidden flex-col gap-1 px-4 py-2 mt-1 mx-2 bg-cs-elevated border border-cs-border rounded-lg shadow-inner">
+                        <a href="#" id="linkLinkedin" target="_blank" class="flex items-center gap-3 px-3 py-2 text-xs text-cs-muted hover:text-[#0077b5] hover:bg-cs-bg rounded-md transition-all">
+                            <i class="fa-brands fa-linkedin text-sm"></i> Search LinkedIn
+                        </a>
+                        <a href="#" id="linkNaukri" target="_blank" class="flex items-center gap-3 px-3 py-2 text-xs text-cs-muted hover:text-[#275df5] hover:bg-cs-bg rounded-md transition-all">
+                            <div class="w-3 h-3 rounded bg-current text-cs-surface flex items-center justify-center font-bold text-[8px]">N</div> Naukri.com
+                        </a>
+                        <a href="#" id="linkWellfound" target="_blank" class="flex items-center gap-3 px-3 py-2 text-xs text-cs-muted hover:text-white hover:bg-cs-bg rounded-md transition-all">
+                            <i class="fa-brands fa-angellist text-sm"></i> Startup Jobs
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="p-4 border-t border-cs-border">
+            <button id="logoutBtn" class="flex items-center gap-3 px-4 py-3 w-full text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-xl font-medium transition-all">
+                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Log Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-cs-bg transition-colors duration-300">
+        
+        <!-- Header -->
+        <header class="h-20 bg-cs-bg border-b border-cs-border flex items-center justify-between px-8 shrink-0 z-30 transition-colors duration-300">
+            <h1 class="font-poppins font-bold text-xl text-cs-text tracking-tight">Dashboard Overview</h1>
+            <div class="flex items-center gap-5">
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-cs-surface border border-cs-border flex items-center justify-center text-cs-muted hover:text-cs-mint transition-colors">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:block"></i>
+                </button>
+                
+                <!-- Notification Bell & Popup -->
+                <div class="relative">
+                    <button id="bellBtn" class="w-10 h-10 rounded-full bg-cs-surface border border-cs-border flex items-center justify-center text-cs-muted hover:text-cs-mint transition-colors relative focus:outline-none">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-cs-mint border-2 border-cs-bg rounded-full"></span>
+                    </button>
+                    
+                    <div id="notificationPopup" class="hidden absolute right-0 top-full mt-4 w-80 bg-cs-elevated border border-cs-border rounded-xl shadow-2xl p-4 z-50 flex-col gap-3 origin-top-right">
+                        <div class="flex items-center justify-between border-b border-cs-border pb-3">
+                            <span class="font-poppins font-bold text-sm text-cs-text flex items-center gap-2">
+                                <i class="fa-solid fa-bullhorn text-cs-mint"></i> TPO Notices
+                            </span>
+                            <span class="text-[10px] bg-cs-mint/20 text-cs-mint px-2 py-0.5 rounded-full font-bold">2 New</span>
+                        </div>
+                        <div class="flex flex-col gap-3 max-h-72 overflow-y-auto custom-scrollbar">
+                            <div class="bg-cs-card border-l-2 border-cs-mint p-3 rounded-r-lg shadow-sm">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-xs font-bold text-cs-text">Resume Verification</span>
+                                    <span class="text-[9px] text-cs-faint">2 hrs ago</span>
+                                </div>
+                                <p class="text-[11px] text-cs-muted leading-relaxed">All final year CS/IT students must submit their ATS-formatted resumes for dean's approval by EOD Friday.</p>
+                            </div>
+                            <div class="bg-cs-card border-l-2 border-cs-border p-3 rounded-r-lg shadow-sm">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-xs font-bold text-cs-text">Mock Interviews</span>
+                                    <span class="text-[9px] text-cs-faint">Yesterday</span>
+                                </div>
+                                <p class="text-[11px] text-cs-muted leading-relaxed">Alumni network will be conducting technical mock interviews next week. Registration links sent to college email.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="credentials.html" class="flex items-center gap-3 pl-5 border-l border-cs-border focus:outline-none group hover:opacity-80 transition-opacity bg-transparent cursor-pointer">
+                    <div class="text-right hidden md:block">
+                        <div id="displayName" class="text-sm font-bold text-cs-text tracking-wide uppercase">STUDENT</div>
+                        <div id="displayRole" class="text-[10px] text-cs-faint font-medium">B.Tech CSE</div>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-cs-mint text-[#0B1214] flex items-center justify-center font-bold text-lg shadow-sm border border-cs-mint-hover group-hover:scale-105 transition-transform">
+                        <span id="displayInitial">S</span>
+                    </div>
+                </a>
+            </div>
+        </header>
+
+        <!-- Scrollable Workspace -->
+        <div class="flex-1 overflow-y-auto p-8 custom-scrollbar relative z-10">
+            <div class="max-w-[1400px] mx-auto flex flex-col gap-6">
+
+                <!-- Welcome Banner -->
+                <div class="custom-card p-8 bg-gradient-to-br from-cs-card to-cs-surface relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 w-[400px] h-full bg-gradient-to-l from-cs-mint/5 to-transparent pointer-events-none"></div>
+                    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div class="flex items-center gap-6">
+                            <div class="w-16 h-16 rounded-2xl bg-cs-surface border border-cs-border flex items-center justify-center shadow-inner group-hover:border-cs-mint/50 transition-colors">
+                                <div class="w-8 h-8 rounded-full border-2 border-cs-mint flex items-center justify-center">
+                                    <div class="w-3 h-3 rounded-full bg-cs-mint"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <h2 class="font-poppins font-bold text-3xl text-cs-text mb-2">Welcome back, <span id="welcomeName" class="text-cs-mint">TEST</span>!</h2>
+                                <p class="text-sm text-cs-muted">Placement season is active. You have <strong class="text-cs-text font-semibold">2 pending assessments</strong> and 3 new campus drives matching your profile.</p>
+                            </div>
+                        </div>
+                        <a href="cv-builder.html" class="bg-cs-mint hover:bg-cs-mint-hover text-[#0B1214] font-bold py-3 px-6 rounded-lg text-sm shadow-md transition-transform hover:-translate-y-0.5 whitespace-nowrap">
+                            <i class="fa-solid fa-pen-fancy mr-2"></i> Update CV
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Stats Grid (Fixed Layout: Number on top, Text centered below) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="custom-card p-6 flex items-center justify-between hover:border-cs-mint/50 transition-colors duration-300">
+                        <div class="flex flex-col justify-center">
+                            <h3 class="text-4xl font-bold text-cs-text leading-none">4</h3>
+                            <p class="text-[11px] text-cs-muted font-bold uppercase tracking-wider mt-2">Total Applications</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-cs-mint/10 text-cs-mint flex items-center justify-center text-xl shadow-inner shrink-0"><i class="fa-solid fa-paper-plane"></i></div>
+                    </div>
+
+                    <div class="custom-card p-6 flex items-center justify-between hover:border-cs-mint/50 transition-colors duration-300">
+                        <div class="flex flex-col justify-center">
+                            <h3 class="text-4xl font-bold text-cs-text leading-none">2</h3>
+                            <p class="text-[11px] text-cs-muted font-bold uppercase tracking-wider mt-2">Shortlisted</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-cs-mint/10 text-cs-mint flex items-center justify-center text-xl shadow-inner shrink-0"><i class="fa-solid fa-briefcase"></i></div>
+                    </div>
+
+                    <div class="custom-card p-6 flex items-center justify-between hover:border-cs-mint/50 transition-colors duration-300">
+                        <div class="flex flex-col justify-center">
+                            <h3 class="text-4xl font-bold text-cs-text leading-none">1</h3>
+                            <p class="text-[11px] text-cs-muted font-bold uppercase tracking-wider mt-2">Pending Tests</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-cs-mint/10 text-cs-mint flex items-center justify-center text-xl shadow-inner shrink-0"><i class="fa-regular fa-clock"></i></div>
+                    </div>
+
+                    <div class="custom-card p-6 flex flex-col justify-center bg-gradient-to-b from-cs-card to-cs-surface border-cs-mint/30 shadow-[0_0_20px_rgba(72, 176, 202,0.05)]">
+                        <div class="flex justify-between items-center mb-3">
+                            <p class="text-[11px] text-cs-muted font-bold uppercase tracking-wider">Profile Match</p>
+                            <span class="text-[10px] font-bold bg-cs-mint/20 text-cs-mint py-1 px-2 rounded-md">+5%</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <h3 class="text-3xl font-bold text-cs-text leading-none">85%</h3>
+                            <div class="flex-1 bg-cs-bg rounded-full h-2.5 overflow-hidden border border-cs-border">
+                                <div class="bg-cs-mint h-2.5 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Grid -->
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="custom-card p-0 overflow-hidden flex flex-col">
+                        <div class="p-6 border-b border-cs-border flex justify-between items-center bg-cs-card">
+                            <h3 class="font-poppins font-bold text-cs-text text-lg">Application Pipeline</h3>
+                            <button class="text-xs font-semibold text-cs-mint hover:text-cs-mint-hover transition-colors">View All</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-cs-surface/50 border-b border-cs-border text-[10px] uppercase tracking-wider text-cs-faint font-semibold">
+                                        <th class="p-4 pl-6">Company</th>
+                                        <th class="p-4">Role</th>
+                                        <th class="p-4">Date Applied</th>
+                                        <th class="p-4 pr-6 text-right">Current Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm divide-y divide-cs-border">
+                                    <tr class="hover:bg-cs-surface/30 transition-colors">
+                                        <td class="p-4 pl-6 font-medium text-cs-text flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded bg-white flex items-center justify-center font-bold text-black border border-cs-border">G</div> Google India
+                                        </td>
+                                        <td class="p-4 text-cs-muted">Software Engineer</td>
+                                        <td class="p-4 text-cs-muted">Oct 02, 2026</td>
+                                        <td class="p-4 pr-6 text-right">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-500">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Accepted (OA Sent)
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-cs-surface/30 transition-colors">
+                                        <td class="p-4 pl-6 font-medium text-cs-text flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded bg-[#00A4EF] flex items-center justify-center text-white border border-cs-border"><i class="fa-brands fa-windows"></i></div> Microsoft
+                                        </td>
+                                        <td class="p-4 text-cs-muted">Data Analyst</td>
+                                        <td class="p-4 text-cs-muted">Sep 28, 2026</td>
+                                        <td class="p-4 pr-6 text-right">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-yellow-500/30 bg-yellow-500/10 text-yellow-500">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span> Under Review
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-cs-surface/30 transition-colors">
+                                        <td class="p-4 pl-6 font-medium text-cs-text flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded bg-[#635BFF] flex items-center justify-center text-white border border-cs-border"><i class="fa-brands fa-stripe-s"></i></div> Stripe
+                                        </td>
+                                        <td class="p-4 text-cs-muted">Backend Engineer</td>
+                                        <td class="p-4 text-cs-muted">Oct 05, 2026</td>
+                                        <td class="p-4 pr-6 text-right">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-500">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Accepted
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-cs-surface/30 transition-colors">
+                                        <td class="p-4 pl-6 font-medium text-cs-text flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded bg-white flex items-center justify-center font-bold text-black border border-cs-border">TCS</div> TCS Digital
+                                        </td>
+                                        <td class="p-4 text-cs-muted">System Engineer</td>
+                                        <td class="p-4 text-cs-muted">Sep 20, 2026</td>
+                                        <td class="p-4 pr-6 text-right">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-red-500/30 bg-red-500/10 text-red-500">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Rejected
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- THEME TOGGLE ENGINE ---
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Check Session
+            if (localStorage.getItem('cc_session') !== 'active') {
+                window.location.href = 'test.html';
+                return;
+            }
+
+            // Load User Details
+            let role = localStorage.getItem('cc_current_role') || "Student";
+            let details = JSON.parse(localStorage.getItem('cc_display_details')) || {};
+            
+            let displayName = details["Name"] ? details["Name"].split(" ")[0] : role;
+            let displaySub = details["Dept"] ? `B.Tech ${details["Dept"]}` : role;
+            
+            document.getElementById('displayName').textContent = displayName;
+            document.getElementById('welcomeName').textContent = displayName;
+            document.getElementById('displayRole').textContent = displaySub;
+            document.getElementById('displayInitial').textContent = displayName.charAt(0).toUpperCase();
+
+            // Logout Logic
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('cc_session');
+                localStorage.removeItem('cc_current_role');
+                localStorage.removeItem('cc_display_details');
+                window.location.href = 'test.html';
+            });
+
+            // --- NOTIFICATION BELL POPUP TOGGLE ---
+            const bellBtn = document.getElementById('bellBtn');
+            const notificationPopup = document.getElementById('notificationPopup');
+
+            if (bellBtn && notificationPopup) {
+                bellBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (notificationPopup.classList.contains('hidden')) {
+                        notificationPopup.classList.remove('hidden');
+                        notificationPopup.classList.add('flex');
+                    } else {
+                        notificationPopup.classList.add('hidden');
+                        notificationPopup.classList.remove('flex');
+                    }
+                });
+                
+                // Close popup when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!notificationPopup.contains(e.target) && !bellBtn.contains(e.target)) {
+                        notificationPopup.classList.add('hidden');
+                        notificationPopup.classList.remove('flex');
+                    }
+                });
+            }
+
+
+            // --- ONBOARDING & OFF-CAMPUS LOGIC ---
+            const modal = document.getElementById('onboardingModal');
+            const box = document.getElementById('onboardingBox');
+            
+            if (!localStorage.getItem('cc_onboarding_done')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    box.classList.remove('scale-95');
+                }, 50);
+            } else {
+                generateOffCampusLinks();
+            }
+
+            document.getElementById('onboardingForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const role = document.getElementById('userTargetRole').value;
+                const skills = document.getElementById('userCoreSkills').value;
+                
+                localStorage.setItem('cc_target_role', role);
+                localStorage.setItem('cc_target_skills', skills);
+                localStorage.setItem('cc_onboarding_done', 'true');
+                
+                modal.classList.add('opacity-0');
+                box.classList.add('scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); }, 300);
+                
+                generateOffCampusLinks();
+            });
+
+            // --- DYNAMIC DASHBOARD SYNC ---
+            function renderDashboard() {
+                const appsStr = localStorage.getItem('cc_applications');
+                if (!appsStr) {
+                    const tbody = document.querySelector('tbody');
+                    if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-cs-muted font-medium">No active applications found. Visit the On-Campus tab to apply!</td></tr>';
+                    return;
+                }
+                
+                const apps = JSON.parse(appsStr);
+                
+                let accepted = 0;
+                let review = 0;
+                let rejected = 0;
+                
+                apps.forEach(app => {
+                    if (app.status === 'accepted') accepted++;
+                    if (app.status === 'review') review++;
+                    if (app.status === 'rejected') rejected++;
+                });
+                
+                const total = apps.length;
+
+                const statCards = document.querySelectorAll('.custom-card h3.text-4xl');
+                if (statCards.length >= 3) {
+                    statCards[0].textContent = total;
+                    statCards[1].textContent = accepted;
+                    statCards[2].textContent = review;
+                }
+
+                const tbody = document.querySelector('tbody');
+                if (tbody) {
+                    let html = '';
+                    apps.forEach(app => {
+                        let statusHtml = '';
+                        if (app.status === 'accepted') {
+                            statusHtml = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-500"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Accepted</span>`;
+                        } else if (app.status === 'review') {
+                            statusHtml = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-yellow-500/30 bg-yellow-500/10 text-yellow-500"><span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span> Under Review</span>`;
+                        } else if (app.status === 'rejected') {
+                            statusHtml = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-red-500/30 bg-red-500/10 text-red-500"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Rejected</span>`;
+                        }
+
+                        html += `
+                        <tr class="hover:bg-cs-surface/30 transition-colors">
+                            <td class="p-4 pl-6 font-medium text-cs-text flex items-center gap-3">
+                                ${app.logoHtml} ${app.name}
+                            </td>
+                            <td class="p-4 text-cs-muted">${app.role}</td>
+                            <td class="p-4 text-cs-muted">${app.date}</td>
+                            <td class="p-4 pr-6 text-right">${statusHtml}</td>
+                        </tr>
+                        `;
+                    });
+                    
+                    if (apps.length === 0) {
+                        html = `<tr><td colspan="4" class="p-8 text-center text-cs-muted font-medium">No active applications found. Visit the On-Campus tab to apply!</td></tr>`;
+                    }
+                    
+                    tbody.innerHTML = html;
+                }
+            }
+            renderDashboard();
+
+            // Toggle Sidebar Dropdown
+            const offCampusToggle = document.getElementById('offCampusToggle');
+            const offCampusMenu = document.getElementById('offCampusMenu');
+            const offCampusChevron = document.getElementById('offCampusChevron');
+
+            if (offCampusToggle) {
+                offCampusToggle.addEventListener('click', () => {
+                    offCampusMenu.classList.toggle('hidden');
+                    offCampusMenu.classList.toggle('flex');
+                    offCampusChevron.classList.toggle('rotate-180');
+                });
+            }
+
+            function generateOffCampusLinks() {
+                const targetRole = localStorage.getItem('cc_target_role');
+                if (!targetRole) return;
+                
+                const encodedRole = encodeURIComponent(targetRole);
+                const dashRole = targetRole.toLowerCase().replace(/\s+/g, '-'); 
+
+                document.getElementById('linkLinkedin').href = `https://www.linkedin.com/jobs/search/?keywords=${encodedRole}`;
+                document.getElementById('linkNaukri').href = `https://www.naukri.com/${dashRole}-jobs`;
+                document.getElementById('linkWellfound').href = `https://wellfound.com/role/${dashRole}`;
+            }
+        });
+    </script>
+<script src="/app-api.js"></script>
+</body>
+</html>
